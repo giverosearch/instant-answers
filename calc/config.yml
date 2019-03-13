@@ -1,0 +1,28 @@
+name: calculator
+description:
+  en: "This calculator is based on open source code."
+  da: "Denne lommeregner er baseret på open source kildekode."
+developers:
+  - name: DuckDuckGo
+    url: https://github.com/duckduckgo/zeroclickinfo-goodies/tree/master/share/goodie/calculator
+  - name: Mailkov
+    url: https://github.com/Mailkov
+  - name: mintsoft
+    url: https://github.com/mintsoft
+  - name: zachthompson
+    url: https://github.com/zachthompson
+  - name: nalinbhardwaj
+    url: https://github.com/nalinbhardwaj
+  - name: moollaza
+    url: https://github.com/moollaza
+  - name: pjhampton
+    url: https://github.com/pjhampton
+  - name: BillyBarbaro
+    url: https://github.com/BillyBarbaro
+  - name: kirkins
+    url: https://github.com/kirkins
+  - name: prattheev
+    url: https://github.com/prattheev
+homepage: https://github.com/giverosearch
+triggers:
+  match: /(?:^(?:free)?\s?(?:online)?\s?calc(?:ulator)?\s?(?:online)?\s?(?:free)?$)|(?:^(?<triggers>calculat(?:e|or)|math|solve)?\s*(?<operand>-?\s*\(*\s*-?\s*(?<number>(?:\d+(?:\.\d+)?)|pi|dozen|e)\s*\)*)\s*(?<operator>(?:-|\+|\*|\/|%|\^|plus|minus|times|divided\sby))\s*(?:\g'operand'|\g'func')(?:\s*\g'operator'\s*(?:\g'func'|\g'operand'))*=?$)|(?:^\g'triggers'?\s*(?<func>(?:-?\s*\(*\s*-?\s*(?:sinh?|tan|log|ln|exp|tanh|arctan|atan|arccos|acosh?|asinh?|arcsin|cosh?|sqrt))\s*\g'operand'\s*\)*)(\s*\g'operator'\s*(?:\g'func'|\g'operand'))*=?$)/i

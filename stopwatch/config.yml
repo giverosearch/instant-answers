@@ -1,0 +1,12 @@
+name: stopwatch
+description:
+  en: "This stopwatch is based on open source code."
+  da: "Dette stopur er baseret på open source kildekode."
+developers:
+  - name: DuckDuckGo
+    url: https://github.com/duckduckgo/zeroclickinfo-goodies/tree/master/share/goodie/stopwatch
+  - name: Matt Ramina
+    url: https://github.com/mattr555/
+homepage: https://github.com/giverosearch
+triggers:
+  match: /^(?<option_trigger>online)?\s*(?<main_trigger>stopwatch|stop watch|chronometer|chronograph|stopur)\s*\g'option_trigger'?$/i

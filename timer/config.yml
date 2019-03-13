@@ -1,0 +1,36 @@
+name: timer
+description:
+  en: "This timer is based on open source code."
+  da: "Denne timer er baseret på open source kildekode."
+developers:
+  - name: DuckDuckGo
+    url: https://github.com/duckduckgo/zeroclickinfo-goodies/tree/master/share/goodie/timer
+  - name: Matt Ramina
+    url: https://github.com/mattr555
+  - name: vCillusion
+    url: https://github.com/vCillusion
+  - name: davidofferman
+    url: https://github.com/davidofferman
+  - name: Mailkov
+    url: https://github.com/Mailkov
+  - name: andrey-p
+    url: https://github.com/andrey-p
+  - name: nalinbhardwaj
+    url: https://github.com/nalinbhardwaj
+  - name: GuiltyDolphin
+    url: https://github.com/GuiltyDolphin
+  - name: moollaza
+    url: https://github.com/moollaza
+  - name: TheSpeedyBlur
+    url: https://github.com/TheSpeedyBlur
+  - name: shivam99aa
+    url: https://github.com/shivam99aa
+  - name: TheOdd
+    url: https://github.com/TheOdd
+  - name: forcemagic
+    url: https://github.com/forcemagic
+  - name: pjhampton
+    url: https://github.com/pjhampton
+homepage: https://github.com/giverosearch
+triggers:
+  match: /^\s*(?<start>start|set|run|begin)*\s*(?<timer>timer|countdown|count down|alarm|reminder|tæl ned|nedtælling)\s*(?<for>for|i)*\s*(?:$|(?:(?<hours>\d+\s*(?:hours|hour|hrs|h|timer|time|t))$)|(?:(?<minutes>\d+\s*(?:minutes|minute|min|minutter|minut|m))$)|(?:(?<seconds>\d+\s*(?:seconds|second|sec|sekunder|sekund|sek|s))$)|(?:\g'hours'\s*\g'minutes'\s*\g'seconds'$)|(?:\g'hours'\s*\g'minutes'$)|(?:\g'hours'\s*\g'seconds'$)|(?:\g'minutes'\s*\g'seconds'$))/i

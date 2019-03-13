@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <link rel="stylesheet" href="style.css" >
+    <title>Document</title>
+</head>
+    <body class="zci--stopwatch">
+        <div id="stopwatch_container">
+            <div class="clearfix pane-block">
+                <div class="goodie-pane">
+                    <span class="label">TOTAL:</span>
+                    <span class="time" id="total_time">00:00.00</span>
+                </div>
+                <div class="goodie-pane goodie-pane-right" style="display: none;">
+                    <span class="label">LAP:</span>
+                    <span class="time" id="current_time">00:00.00</span>
+                </div>
+            </div>
+            <div class="btn-wrapper">
+                <button class="stopwatch__btn start">START</button>
+                <div class="stopwatch__left" style="display: none;">
+                    <button class="stopwatch__btn" id="reset_btn" disabled>RESET</button>
+                    <button class="stopwatch__btn" id="lap_btn" disabled>LAP</button>
+                </div>
+            </div>
+            <table id="split_list" class="is-hidden"></table>
+        </div>
+        <script src="common/iframeHandler.min.js"></script>
+        <script src="common/instantAnswer.js"></script>
+        <script src="lib/jquery.min.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>

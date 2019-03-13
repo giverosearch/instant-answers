@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" >
+</head>
+    <body class="zci--timer is-active">
+        <div class="cw">
+            <div class="zci__main  zci__main--detail  c-base">
+                <div class="zci__body">
+
+                    <div class="tile bg-clr--platinum-light" id="add_timer_container">
+                        <a id="add_timer_btn" class="tx-clr--slate">+</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="common/iframeHandler.min.js"></script>
+        <script src="common/instantAnswer.js"></script>
+        <script src="lib/jquery.min.js"></script>
+        <script src="lib/howler.min.js"></script>
+        <script src="lib/handlebars.min.js"></script>
+        <script src="script.js"></script>
+
+        <script id="timer" type="text/x-handlebars-template">
+            <div class="timer_container tile status_not_started">
+                <div class="tx-clr--slate play_pause">
+                    <a href=""></a>
+                    <div class="progress">
+                        <div class="fill">
+                            <span class="rotated_fill"></span>
+                            <span class="first_half_fill"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="display_container">
+                    <div class="name">
+                        <input type="text" class="bg-clr--silver tx-clr--slate name_input" value="Timer 1"/>
+                    </div>
+                    <div class="time">
+                        <div class="time_display">
+                            <span class="tx-clr--slate hours_minutes">00:00</span>
+                            <span class="seconds">00</span>
+                        </div>
+                        <div class="time_input">
+                            <input type="tel" pattern="\d*" maxlength="2" class="bg-clr--silver tx-clr--slate hours" placeholder="HH">
+                            <span class="separator">:</span>
+                            <input type="tel" pattern="\d*" maxlength="2" class="bg-clr--silver tx-clr--slate minutes" placeholder="MM">
+                            <span class="separator">:</span>
+                            <input type="tel" pattern="\d*" maxlength="2" class="bg-clr--silver tx-clr--slate seconds" placeholder="SS">
+                        </div>
+                    </div>
+                </div>
+                <a href="" class="corner_btn reset">RESET</a>
+                <a href="" class="corner_btn add_minute bg-clr--silver">+1</a>
+                <a href="" class="corner_btn close">&times;</a>
+            </div>
+        </script>
+    </body>
+</html>
