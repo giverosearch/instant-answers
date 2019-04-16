@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <link rel="stylesheet" href="style.css" >
+    <title>Document</title>
+</head>
+    <body>
+        <div class="forecast-settings">
+            <div id="fe_temp_switch">
+                <span id="fe_fahrenheit">&deg;F</span> / <span id="fe_celsius">&deg;C</span>
+            </div>
+        </div>
+        <div id="forecast-wrapper"></div>
+        <script src="common/iframeHandler.min.js"></script>
+        <script src="common/instantAnswer.js"></script>
+        <script src="lib/jquery.min.js"></script>
+        <script src="lib/handlebars.min.js"></script>
+        <script src="lib/moment.js"></script>
+        <script src="script.js"></script>
+
+        <script id="template-item" type="text/x-handlebars-template">
+            {{#each this}}
+            {{#if isCurrent}}
+            <div class="tile tile--s current-tile" data-link="{{meta.sourceUrl}}">
+                <div class="fe_currently  text--secondary{{#if alerts}}  alert{{/if}}">
+                    <h5 class="fe_label  text--primary"><span href="{{{meta.sourceUrl}}}">Right Now:</span></h5>
+                    <div class="fe_current-wrap">
+                        <div class="fe_current__top">
+                            <h1 class="fe_temp  tx-clr--dk">{{{temp}}}</h1>
+                            <span class="fe_icon-wrap  fe_icon-wrap--current">
+				{{{forecast_icon icon size="80px"}}}
+			  </span>
+                        </div>
+                        <div class="fe_current__bottom">
+                            {{#if summary}}<h6 class="fe_topline"><span class="fe_summary {{summaryClass}}">{{{summary}}}</span></h6>{{/if}}
+                            {{#if wind}}<h6 class="fe_wind">{{{wind}}}</h6>{{/if}}
+                            {{#if humidity}}<h6 class="fe_humidity">{{{humidity}}}</h6>{{/if}}
+                            {{#if precipitation}}<h6 class="fe_precipitation">{{{precipitation}}}</h6>{{/if}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{else}}
+            <div class="tile tile--s" data-link="{{daysourceUrl}}">
+                <div class="fe_day  text--secondary">
+              <span class="fe_icon-wrap fe_icon-wrap--daily">
+                  {{{forecast_icon icon}}}
+              </span>
+                    <div class="media__body">
+                        <h5 class="fe_label  text--primary"><span href="{{{daysourceUrl}}}">{{{day}}}:</span></h5>
+                        <h6 class="fe_date  tx-clr--lt2">{{{date}}}</h6>
+                    </div>
+                    <div class="fe_summary">{{summary}}</div>
+                    <div class="fe_temp_corner">
+                        <h1 class="fe_high_temp  tx-clr--dk">{{{highTemp}}}</h1>
+                        <h1 class="fe_low_temp  tx-clr--lt3">{{{lowTemp}}}</h1>
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+            {{/each}}
+        </script>
+
+        <script id="template-icon" type="text/x-handlebars-template">
+            <img class="fe_icon" src="{{path}}{{file}}/{{icon}}.{{file}}" />
+            <!--<img class="fe_icon&#45;&#45;alt" src="{{path}}{{file}}/{{icon}}-alt.{{file}}" />-->
+        </script>
+    </body>
+</html>

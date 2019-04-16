@@ -1,0 +1,14 @@
+name: forecast
+description:
+  en: "This forecast is based on open source code."
+developers:
+  - name: DuckDuckGo
+    url: https://github.com/duckduckgo/zeroclickinfo-goodies/tree/master/share/goodie/stopwatch
+homepage: https://github.com/giverosearch
+triggers:
+  match: /^(?<main_trigger>weather|forecast|weather forecast|weer|meteo)$/i
+declarations:
+  env:
+    - AI_FORECAST_DARKSKY_APIKEY
+  proxy:
+    darksky: https://api.darksky.net/forecast/{{ENV(AI_FORECAST_DARKSKY_APIKEY)}}
