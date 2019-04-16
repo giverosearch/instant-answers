@@ -912,7 +912,7 @@ DDH.calculator = DDH.calculator || {};
     }
 
     $(document).ready(function () {
-
+        IA.ready();
         var displayValue = (IA.getQuery() === null) ? "0" : "";
         var processedQuery = IA.getQuery(); // if there was an expression in the query
 

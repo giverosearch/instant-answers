@@ -34,12 +34,6 @@
     };
 
     env.ddg_spice_forecast = function(api_result) {
-
-        // Exit if we've got a bad forecast
-        if (!api_result || !api_result.hourly || !api_result.hourly.data || !api_result.daily || !api_result.daily.data) {
-            return Spice.failed('forecast');
-        }
-
         // Set up some stuff we'll need
         var weatherData = {},
             spiceData,
@@ -458,14 +452,22 @@
         if (navigator && navigator.geolocation) {
             // navigator.geolocation.getCurrentPosition(function (p) {
             var latitude = 49.8603088;
-            var longitude=  24.0361825;
+            var longitude = 24.0361825;
             $.ajax({
                 url: '/ia/forecast/darksky/' + latitude + ',' + longitude,
                 success: function(data) {
-                    env.ddg_spice_forecast(data);
+                    // Exit if we've got a bad forecast
+                    if (!data || !data.hourly || !data.hourly.data || !data.daily || !data.daily.data) {
+                        window.IA.failed();
+                        throw Error('IA:forecast Wrong data from feed');
+                    } else {
+                        env.ddg_spice_forecast(data);
+                        window.IA.ready();
+                    }
                 },
                 error: function() {
-                    console.log('error');
+                    window.IA.failed();
+                    throw Error('IA:forecast Cannot retrieve data from feed');
                 },
             });
         }

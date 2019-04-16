@@ -106,6 +106,7 @@ DDH.stopwatch.build = function(ops) {
     var firstStopwatchRun = false;
 
     $(document).ready(function () {
+        IA.ready();
         // Wait for the goodie to load before displaying things
         // This makes sure the divs display at the right time so the layout doesn't break
         $(".zci--stopwatch .goodie-pane-right").css("display", "inline-block");

@@ -502,6 +502,7 @@ DDH.timer.build = function(ops) {
         });
     }
     $(document).ready(function () {
+        IA.ready();
         onShow();
     })
 };

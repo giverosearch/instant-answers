@@ -16,7 +16,23 @@
         },
         getQuery: function () {
             return this.getParameterByName(this.QUERY_PARAMETER);
-        }
+        },
+        ready: function () {
+            var timer = setInterval(function(){
+                if (window.parentIFrame) {
+                    window.parentIFrame.sendMessage({action: 'ready'});
+                    clearInterval(timer);
+                }
+            }, 10)
+        },
+        failed: function () {
+            var timer = setInterval(function(){
+                if (window.parentIFrame) {
+                    window.parentIFrame.sendMessage({action: 'failed'});
+                    clearInterval(timer);
+                }
+            }, 10)
+        },
     };
     window.IA = new IA();
 })();
