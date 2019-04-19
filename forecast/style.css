@@ -41,10 +41,20 @@
 	flex-wrap: nowrap;
 }
 
-.forecast-settings {
+#forecast-header {
 	display: flex;
-	justify-content: flex-end;
 	padding-right: 40px;
+	padding-left: 5px;
+}
+
+#forecast-header .location {
+	margin-left: 0;
+	margin-right: auto;
+}
+
+#forecast-header #fe_temp_switch {
+	margin-left: auto;
+	margin-right: 0;
 }
 
 h6, h5, h4, h3, h2, h1 {

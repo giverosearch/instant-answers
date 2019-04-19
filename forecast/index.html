@@ -12,12 +12,12 @@
     <title>Document</title>
 </head>
     <body>
-        <div class="forecast-settings">
-            <div id="fe_temp_switch">
-                <span id="fe_fahrenheit">&deg;F</span> / <span id="fe_celsius">&deg;C</span>
-            </div>
+        <div id="forecast-header">
+            <!--here will be rendered template "template-header"-->
         </div>
-        <div id="forecast-wrapper"></div>
+        <div id="forecast-wrapper">
+            <!--here will be rendered template "template-item"-->
+        </div>
         <script src="common/iframeHandler.min.js"></script>
         <script src="common/instantAnswer.js"></script>
         <script src="lib/jquery.min.js"></script>
@@ -66,6 +66,13 @@
                 {{/if}}
             </div>
             {{/each}}
+        </script>
+
+        <script id="template-header" type="text/x-handlebars-template">
+            <div class="location text--secondary">{{header}}</div>
+            <div id="fe_temp_switch">
+                <span id="fe_fahrenheit">&deg;F</span> / <span id="fe_celsius">&deg;C</span>
+            </div>
         </script>
 
         <script id="template-icon" type="text/x-handlebars-template">

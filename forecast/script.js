@@ -33,7 +33,7 @@
         "Pacific/Honolulu" : 1
     };
 
-    env.ddg_spice_forecast = function(api_result) {
+    env.ddg_spice_forecast = function(api_result, city, country) {
         // Set up some stuff we'll need
         var weatherData = {},
             spiceData,
@@ -255,7 +255,11 @@
             weatherData.alerts = build_alerts(api_result);
             weatherData.daily = build_daily(api_result);
             weatherData.activeUnit = unit_labels[units].temperature;
-            weatherData.city = api_result.flags['ddg-location'];
+            if (city && country) {
+                weatherData.city = city + ', ' + country;
+            } else if (city) {
+                weatherData.city = city;
+            }
 
             // build the header text:
             weatherData.header = weatherData.city ? 'Weather for ' + weatherData.city : 'Weather';
@@ -282,13 +286,15 @@
             //     obj.size = options && options.hash && options.hash.size || "40px";
             //     return DDG.exec_template(Spice.forecast.forecast_icons, obj);
             // });
+        var templateHeader = Handlebars.compile($("#template-header").html());
+        $("#forecast-header").append(templateHeader(weatherData));
+
         var templateIcon = Handlebars.compile($("#template-icon").html());
         Handlebars.registerHelper('forecast_icon', function(obj, options) {
             options.hash.size = options && options.hash && options.hash.size || "40px";
             return templateIcon(obj);
         });
         var templateItem = Handlebars.compile($("#template-item").html());
-        console.log(spiceData);
         var ledger_item = templateItem(spiceData);
         $("#forecast-wrapper").append(ledger_item);
             // console.log(spiceData);
@@ -449,28 +455,63 @@
     };
 
     $(document).ready(function () {
-        if (navigator && navigator.geolocation) {
-            // navigator.geolocation.getCurrentPosition(function (p) {
-            var latitude = 49.8603088;
-            var longitude = 24.0361825;
-            $.ajax({
-                url: '/ia/forecast/darksky/' + latitude + ',' + longitude,
-                success: function(data) {
-                    // Exit if we've got a bad forecast
-                    if (!data || !data.hourly || !data.hourly.data || !data.daily || !data.daily.data) {
+        var language = null;
+        var latitude = null;
+        var longitude = null;
+        var city = '';
+        var country = '';
+        IA.imports.getVariable('USER_BROWSER_LANGUAGE', function (value) {
+            if (!value) {
+                language = 'en';
+            } else {
+                language = value.split('-')[0];
+            }
+            callDarksky();
+        });
+        IA.imports.getVariable('USER_GEOLOCATION_LATITUDE', function (value) {
+            if (!value) {
+                window.IA.failed();
+            } else {
+                latitude = value;
+                callDarksky();
+            }
+        });
+        IA.imports.getVariable('USER_GEOLOCATION_LONGITUDE', function (value) {
+            if (!value) {
+                window.IA.failed();
+            } else {
+                longitude = value;
+                callDarksky();
+            }
+        });
+        IA.imports.getVariable('USER_CITY_NAME', function (value) {
+            city = value;
+        });
+        IA.imports.getVariable('USER_COUNTRY_NAME', function (value) {
+            country = value;
+        });
+        function callDarksky() {
+            if (latitude && longitude) {
+                $.ajax({
+                    url: '/ia/forecast/darksky/' + latitude + ',' + longitude + '?lang=' + language,
+                    success: function(data) {
+                        // Exit if we've got a bad forecast
+                        if (!data || !data.hourly || !data.hourly.data || !data.daily || !data.daily.data) {
+                            window.IA.failed();
+                            throw Error('IA:forecast Wrong data from feed');
+                        } else {
+                            env.ddg_spice_forecast(data, city, country);
+                            window.IA.ready();
+                        }
+                    },
+                    error: function() {
                         window.IA.failed();
-                        throw Error('IA:forecast Wrong data from feed');
-                    } else {
-                        env.ddg_spice_forecast(data);
-                        window.IA.ready();
-                    }
-                },
-                error: function() {
-                    window.IA.failed();
-                    throw Error('IA:forecast Cannot retrieve data from feed');
-                },
-            });
+                        throw Error('IA:forecast Cannot retrieve data from feed');
+                    },
+                });
+            }
         }
+
     });
 
 }(this));

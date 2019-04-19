@@ -7,6 +7,13 @@ developers:
 homepage: https://github.com/giverosearch
 triggers:
   match: /^(?<main_trigger>weather|forecast|weather forecast|weer|meteo)$/i
+imports:
+  var:
+    - USER_GEOLOCATION_LATITUDE
+    - USER_GEOLOCATION_LONGITUDE
+    - USER_COUNTRY_NAME
+    - USER_CITY_NAME
+    - USER_BROWSER_LANGUAGE
 declarations:
   env:
     - AI_FORECAST_DARKSKY_APIKEY
