@@ -6,7 +6,7 @@ developers:
     url: https://github.com/duckduckgo/zeroclickinfo-goodies/tree/master/share/goodie/stopwatch
 homepage: https://github.com/giverosearch
 triggers:
-  match: /^(?<main_trigger>weather|forecast|weather forecast|weer|meteo)$/i
+  match: /^(?<city_name>\w+(?:[\s-]\w+)*)?\s*(?<main_trigger>weather|forecast|weather forecast|weer|meteo|wetter|clima)\s*\g'city_name'?$/i
 imports:
   var:
     - USER_GEOLOCATION_LATITUDE
@@ -17,5 +17,7 @@ imports:
 declarations:
   env:
     - AI_FORECAST_DARKSKY_APIKEY
+    - AI_FORECAST_GOOGLE_APIKEY
   proxy:
     darksky: https://api.darksky.net/forecast/{{ENV(AI_FORECAST_DARKSKY_APIKEY)}}
+    google: https://maps.googleapis.com/maps/api/geocode/json?key={{ENV(AI_FORECAST_GOOGLE_APIKEY)}}

@@ -265,9 +265,10 @@
             weatherData.header = weatherData.city ? 'Weather for ' + weatherData.city : 'Weather';
 
             // if there's alerts add them to the end:
-            if (weatherData.alerts) {
-                weatherData.header += ' ' + weatherData.alerts;
-            }
+            // TODO: Why we need alerts?
+            // if (weatherData.alerts) {
+            //     weatherData.header += ' ' + weatherData.alerts;
+            // }
 
             // structure the data differently for mobile and desktop views
             // TODO: Error
@@ -454,46 +455,83 @@
         // });
     };
 
-    $(document).ready(function () {
-        var language = null;
-        var latitude = null;
-        var longitude = null;
-        var city = '';
-        var country = '';
-        IA.imports.getVariable('USER_BROWSER_LANGUAGE', function (value) {
-            if (!value) {
-                language = 'en';
-            } else {
-                language = value.split('-')[0];
+    env.givero = {
+        showForecastInAddress: function(address) {
+            var language = 'en';
+            IA.imports.getVariable('USER_BROWSER_LANGUAGE', function (value) {
+                if (value) {
+                    language = value.split('-')[0];
+                }
+            });
+            function getComponentByType(type, address_components){
+                for (var i=0; i < address_components.length; i++) {
+                    for (var j=0; j < address_components[i].types.length; j++) {
+                        if (address_components[i].types[j] === type) {
+                            return address_components[i].long_name
+                        }
+                    }
+                }
             }
-            callDarksky();
-        });
-        IA.imports.getVariable('USER_GEOLOCATION_LATITUDE', function (value) {
-            if (!value) {
-                window.IA.failed();
-            } else {
-                latitude = value;
-                callDarksky();
-            }
-        });
-        IA.imports.getVariable('USER_GEOLOCATION_LONGITUDE', function (value) {
-            if (!value) {
-                window.IA.failed();
-            } else {
-                longitude = value;
-                callDarksky();
-            }
-        });
-        IA.imports.getVariable('USER_CITY_NAME', function (value) {
-            city = value;
-        });
-        IA.imports.getVariable('USER_COUNTRY_NAME', function (value) {
-            country = value;
-        });
-        function callDarksky() {
+            $.ajax({
+                url: '/ia/forecast/google/&address=' + address,
+                success: function(data) {
+                    if (data && data.results && data.results[0].formatted_address && data.results[0].geometry && data.results[0].geometry.location) {
+                        var country = getComponentByType('country', data.results[0].address_components);
+                        var city = getComponentByType('locality', data.results[0].address_components);
+                        env.givero.callDarksky(
+                            data.results[0].geometry.location.lat,
+                            data.results[0].geometry.location.lng,
+                            language,
+                            city,
+                            country
+                        )
+                    } else {
+                        window.IA.failed();
+                    }
+                },
+                error: function(error) {
+                    env.givero.showCurrentForecast();
+                },
+            });
+        },
+        showCurrentForecast: function() {
+            var language = 'en';
+            var latitude = null;
+            var longitude = null;
+            var city = '';
+            var country = '';
+            IA.imports.getVariable('USER_BROWSER_LANGUAGE', function (value) {
+                if (!value) {
+                    language = value.split('-')[0];
+                }
+            });
+            IA.imports.getVariable('USER_CITY_NAME', function (value) {
+                city = value;
+            });
+            IA.imports.getVariable('USER_COUNTRY_NAME', function (value) {
+                country = value;
+            });
+            IA.imports.getVariable('USER_GEOLOCATION_LATITUDE', function (value) {
+                if (!value) {
+                    window.IA.failed();
+                } else {
+                    latitude = value;
+                    env.givero.callDarksky(latitude, longitude, language, city, country);
+                }
+            });
+            IA.imports.getVariable('USER_GEOLOCATION_LONGITUDE', function (value) {
+                if (!value) {
+                    window.IA.failed();
+                } else {
+                    longitude = value;
+                    env.givero.callDarksky(latitude, longitude, language, city, country);
+                }
+            });
+        },
+        callDarksky: function (latitude, longitude, language, city, country) {
             if (latitude && longitude) {
                 $.ajax({
-                    url: '/ia/forecast/darksky/' + latitude + ',' + longitude + '?lang=' + language,
+                    url: '/ia/forecast/darksky//' + latitude + ',' + longitude + '?lang=' + language,
                     success: function(data) {
                         // Exit if we've got a bad forecast
                         if (!data || !data.hourly || !data.hourly.data || !data.daily || !data.daily.data) {
@@ -510,8 +548,37 @@
                     },
                 });
             }
-        }
+        },
+        getAddressFromQuery: function () {
+            var query = window.IA.getQuery();
+            var address = query
+            // 0. handles main trigger words
+                .replace(/weather/g, '')
+                .replace(/forecast/g, '')
+                .replace(/weather forecast/g, '')
+                .replace(/weer/g, '')
+                .replace(/meteo/g, '')
+                .replace(/wetter/g, '')
+                .replace(/clima/g, '')
 
+            // 1. handles option trigger words
+                .replace(/local/g, '')
+                .replace(/near me/g, '')
+                .replace(/nearby me/g, '')
+                .replace(/current/g, '')
+
+                .trim();
+            return address;
+        }
+    };
+
+    $(document).ready(function () {
+        var address = env.givero.getAddressFromQuery();
+        if (address) {
+            env.givero.showForecastInAddress(address);
+        } else {
+            env.givero.showCurrentForecast();
+        }
     });
 
 }(this));
