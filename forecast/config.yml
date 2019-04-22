@@ -6,7 +6,7 @@ developers:
     url: https://github.com/duckduckgo/zeroclickinfo-goodies/tree/master/share/goodie/stopwatch
 homepage: https://github.com/giverosearch
 triggers:
-  match: /^(?<city_name>\w+(?:[\s-]\w+)*)?\s*(?<main_trigger>weather|forecast|weather forecast|weer|meteo|wetter|clima)\s*\g'city_name'?$/i
+  match: /^(?<city_name>[\wæøåÆØÅ]+(?:[\s-][\wæøåÆØÅ]+)*)?\s*(?<main_trigger>weather|forecast|weather forecast|weer|meteo|wetter|clima|vejr|vejret|vejrudsigt|vejrudsigten)\s*\g'city_name'?$/i
 imports:
   var:
     - USER_GEOLOCATION_LATITUDE

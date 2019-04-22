@@ -33,7 +33,33 @@
         "Pacific/Honolulu" : 1
     };
 
-    env.ddg_spice_forecast = function(api_result, city, country) {
+    var weatherForStringLocale = {
+        en: 'Weather for',
+        da: 'Vejret for',
+    };
+
+    var todayStringLocale = {
+        en: 'today',
+        da: 'i dag',
+    };
+
+    var rightNowStringLocale = {
+        en: 'Right now',
+        da: 'Lige nu',
+    };
+
+    var windStringLocale = {
+        en: 'Wind',
+        da: 'Vind',
+    };
+
+    var humidityStringLocale = {
+        en: 'Humidity',
+        da: 'Fugtighed',
+    };
+
+    env.ddg_spice_forecast = function(api_result, city, country, language) {
+        moment.locale(language);
         // Set up some stuff we'll need
         var weatherData = {},
             spiceData,
@@ -155,18 +181,23 @@
                 } else {
                     wind_speed += ' ' + speed_units
                 }
-                currentObj.wind = 'Wind: ' + wind_speed;
+                currentObj.wind = windStringLocale[language] || windStringLocale['en'];
+                currentObj.wind += ': ' + wind_speed;
             }
 
             currentObj.icon = getIcon(getIconType(f.currently.icon));
 
             if (f.currently.humidity) {
-                currentObj.humidity = 'Humidity: ' + Math.round(f.currently.humidity * 100) + '%';
+                currentObj.humidity = humidityStringLocale[language] || humidityStringLocale['en'];
+                currentObj.humidity += ': ' + Math.round(f.currently.humidity * 100) + '%';
             }
 
             if (f.currently.precipProbability) {
                 currentObj.precipitation = 'Chance of Precipitation: ' + Math.round(f.currently.precipProbability * 100) + '%';
             }
+
+            currentObj.title = rightNowStringLocale[language] || rightNowStringLocale['en'];
+            currentObj.title += ':';
 
             return currentObj;
         };
@@ -214,7 +245,7 @@
 
                 // TODO: ERROR
                 if (i == 0) {
-                    dailyObj[i].day = 'Today';
+                    dailyObj[i].day = todayStringLocale[language] || todayStringLocale['en'];
                 // } else if (is_mobile) {
                 //     dailyObj[i].day = tmp_date.format("ddd").toUpperCase();
                 } else {
@@ -262,7 +293,8 @@
             }
 
             // build the header text:
-            weatherData.header = weatherData.city ? 'Weather for ' + weatherData.city : 'Weather';
+            var weatherForWord = weatherForStringLocale[language] || weatherForStringLocale['en'];
+            weatherData.header = weatherData.city ? weatherForWord + ' ' + weatherData.city : '';
 
             // if there's alerts add them to the end:
             // TODO: Why we need alerts?
@@ -412,7 +444,8 @@
                             $this.find('.fe_high_temp').html(Math.round(day.tempMax) + '&deg;');
                             $this.find('.fe_low_temp').html(Math.round(day.tempMin) + '&deg;');
                         });
-                        $('.fe_currently').find('.fe_wind').html('Wind: ' + Math.round(temps.wind) + ' ' + wind_uom +
+                        var windWord = windStringLocale[language] || windStringLocale['en'];
+                        $('.fe_currently').find('.fe_wind').html(windWord + ': ' + Math.round(temps.wind) + ' ' + wind_uom +
                             ' (' + wind_bearing_to_str(api_result.currently.windBearing) + ')');
 
                         updateTempSwitch(uom);
@@ -462,6 +495,7 @@
                 if (value) {
                     language = value.split('-')[0];
                 }
+                callGoogle();
             });
             function getComponentByType(type, address_components){
                 for (var i=0; i < address_components.length; i++) {
@@ -472,27 +506,30 @@
                     }
                 }
             }
-            $.ajax({
-                url: '/ia/forecast/google/&address=' + address,
-                success: function(data) {
-                    if (data && data.results && data.results[0].formatted_address && data.results[0].geometry && data.results[0].geometry.location) {
-                        var country = getComponentByType('country', data.results[0].address_components);
-                        var city = getComponentByType('locality', data.results[0].address_components);
-                        env.givero.callDarksky(
-                            data.results[0].geometry.location.lat,
-                            data.results[0].geometry.location.lng,
-                            language,
-                            city,
-                            country
-                        )
-                    } else {
-                        window.IA.failed();
-                    }
-                },
-                error: function(error) {
-                    env.givero.showCurrentForecast();
-                },
-            });
+            function callGoogle() {
+                $.ajax({
+                    url: '/ia/forecast/google/&address=' + address,
+                    success: function(data) {
+                        if (data && data.results && data.results[0].formatted_address && data.results[0].geometry && data.results[0].geometry.location) {
+                            var country = getComponentByType('country', data.results[0].address_components);
+                            var city = getComponentByType('locality', data.results[0].address_components);
+                            env.givero.callDarksky(
+                                data.results[0].geometry.location.lat,
+                                data.results[0].geometry.location.lng,
+                                language,
+                                city,
+                                country
+                            )
+                        } else {
+                            window.IA.failed();
+                        }
+                    },
+                    error: function(error) {
+                        env.givero.showCurrentForecast();
+                    },
+                });
+            }
+
         },
         showCurrentForecast: function() {
             var language = 'en';
@@ -538,7 +575,7 @@
                             window.IA.failed();
                             throw Error('IA:forecast Wrong data from feed');
                         } else {
-                            env.ddg_spice_forecast(data, city, country);
+                            env.ddg_spice_forecast(data, city, country, language);
                             window.IA.ready();
                         }
                     },
@@ -560,6 +597,10 @@
                 .replace(/meteo/g, '')
                 .replace(/wetter/g, '')
                 .replace(/clima/g, '')
+                .replace(/vejr/g, '')
+                .replace(/vejret/g, '')
+                .replace(/vejrudsigt/g, '')
+                .replace(/vejrudsigten/g, '')
 
             // 1. handles option trigger words
                 .replace(/local/g, '')
