@@ -55,7 +55,7 @@
 
     var humidityStringLocale = {
         en: 'Humidity',
-        da: 'Fugtighed',
+        da: 'Luftfugtighed',
     };
 
     env.ddg_spice_forecast = function(api_result, city, country, language) {
