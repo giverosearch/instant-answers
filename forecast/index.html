@@ -12,72 +12,93 @@
     <title>Document</title>
 </head>
     <body>
-        <div id="forecast-header">
-            <!--here will be rendered template "template-header"-->
-        </div>
-        <div id="forecast-wrapper">
+        <div id="forecast-wrapper" class="forecast-wrapper">
             <!--here will be rendered template "template-item"-->
+            <div class="module module--forecast module__container">
+                <div id="forecast-today" class="js-forecast-module-detail">
+
+                </div>
+                <div id="forecast-daily" class="module__items align-days">
+
+                </div>
+            </div>
         </div>
         <script src="common/iframeHandler.min.js"></script>
         <script src="common/instantAnswer.js"></script>
         <script src="lib/jquery.min.js"></script>
         <script src="lib/handlebars.min.js"></script>
         <script src="lib/moment.js"></script>
+        <script src="lib/moment-timezone-with-data.js"></script>
+        <script src="lib/Chart.min.js"></script>
         <script src="script.js"></script>
+
+        <script id="template-detailed-item" type="text/xx-handlebars-template">
+            <div class="module__top js-forecast-module-detail-top">
+                <div class="module__place text--primary">
+                    {{city}}
+                </div>
+                <div class="module__warnings">
+                    <div class="module__summary  tx-clr--slate-light">
+                        {{{summary}}}
+                    </div>
+                </div>
+                <div class="module__detail module__detail--left">
+                    <img class="module__forecast-icon " src="{{get_icon icon}}" aria-hidden="true">
+                    <div class="module__temperature">
+                        <div class="module__temperature-value  text--primary">
+                            {{{temp}}}
+                        </div>
+                        <div class="module__temperature-units ">
+                            <a href="javaScript:void(0);" data-unit="f" class="module__temperature-unit js-forecast-module-detail-unit ">
+                                F
+                            </a>
+                            <span class="module__temperature-unit-separator">/</span>
+                            <a href="javaScript:void(0)" data-unit="c" class="module__temperature-unit js-forecast-module-detail-unit module__temperature-unit--on text--primary">
+                                C
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="module__detail module__detail--right">
+                    <div class="module__humidity">{{humidity}}</div>
+                    <div class="module__winds">
+                        <span class="module__winds module__winds--val">
+                            {{wind}}
+                        </span>
+                    </div>
+                    <div>
+                        <a href="{{daysourceUrl}}" target="_blank" class="summary-more js-forecast-module-detail-more tx-clr--blue-dark">
+                            Show More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="module__bottom js-forecast-module-detail-bottom">
+                <div class="module__detail module__detail--hours js-forecast-module-detail-hours" aria-hidden="true">
+                    <canvas id="myChart" width="550" height="62" class="chartjs-render-monitor"></canvas>
+                </div>
+                <div class="module__detail--hours__labels module__detail--hours__labels--desktop">
+                    {{#each hourly}}
+                    <div data-item-index="0" class="label-0 module__detail--hours__labels__item">
+                        <div class="module__detail__temp-label text-primary">{{{temp}}}&deg;</div>
+                        <div class="module__detail__hour-label tx-clr--slate-light">{{time}}</div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </script>
 
         <script id="template-item" type="text/x-handlebars-template">
             {{#each this}}
-            {{#if isCurrent}}
-            <div class="tile tile--s current-tile" data-link="{{meta.sourceUrl}}">
-                <div class="fe_currently  text--secondary{{#if alerts}}  alert{{/if}}">
-                    <h5 class="fe_label  text--primary"><span href="{{{meta.sourceUrl}}}">{{title}}</span></h5>
-                    <div class="fe_current-wrap">
-                        <div class="fe_current__top">
-                            <h1 class="fe_temp  tx-clr--dk">{{{temp}}}</h1>
-                            <span class="fe_icon-wrap  fe_icon-wrap--current">
-				{{{forecast_icon icon size="80px"}}}
-			  </span>
-                        </div>
-                        <div class="fe_current__bottom">
-                            {{#if summary}}<h6 class="fe_topline"><span class="fe_summary {{summaryClass}}">{{{summary}}}</span></h6>{{/if}}
-                            {{#if wind}}<h6 class="fe_wind">{{{wind}}}</h6>{{/if}}
-                            {{#if humidity}}<h6 class="fe_humidity">{{{humidity}}}</h6>{{/if}}
-                            {{#if precipitation}}<h6 class="fe_precipitation">{{{precipitation}}}</h6>{{/if}}
-                        </div>
-                    </div>
+                <div data-item-index="{{index}}" class="module__items-item js-forecast-module-item  align-days__item module__items-item">
+                    <div class="module__items-day text-primary">{{{day}}}</div>
+                    <img class="module__items-icon" src="{{get_icon icon}}" />
+                    <div class="module__items-unit module__items-unit--on text-primary">{{{highTemp}}}</div>
+                    <div class="module__items-unit module__items-unit--low tx-clr--slate-light">{{{lowTemp}}}</div>
                 </div>
-            </div>
-            {{else}}
-            <div class="tile tile--s" data-link="{{daysourceUrl}}">
-                <div class="fe_day  text--secondary">
-              <span class="fe_icon-wrap fe_icon-wrap--daily">
-                  {{{forecast_icon icon}}}
-              </span>
-                    <div class="media__body">
-                        <h5 class="fe_label  text--primary"><span href="{{{daysourceUrl}}}">{{{day}}}:</span></h5>
-                        <h6 class="fe_date  tx-clr--lt2">{{{date}}}</h6>
-                    </div>
-                    <div class="fe_summary">{{summary}}</div>
-                    <div class="fe_temp_corner">
-                        <h1 class="fe_high_temp  tx-clr--dk">{{{highTemp}}}</h1>
-                        <h1 class="fe_low_temp  tx-clr--lt3">{{{lowTemp}}}</h1>
-                    </div>
-                </div>
-                {{/if}}
-            </div>
+
             {{/each}}
         </script>
 
-        <script id="template-header" type="text/x-handlebars-template">
-            <div class="location text--secondary">{{header}}</div>
-            <div id="fe_temp_switch">
-                <span id="fe_fahrenheit">&deg;F</span> / <span id="fe_celsius">&deg;C</span>
-            </div>
-        </script>
-
-        <script id="template-icon" type="text/x-handlebars-template">
-            <img class="fe_icon" src="{{path}}{{file}}/{{icon}}.{{file}}" />
-            <!--<img class="fe_icon&#45;&#45;alt" src="{{path}}{{file}}/{{icon}}-alt.{{file}}" />-->
-        </script>
     </body>
 </html>

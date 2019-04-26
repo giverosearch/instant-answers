@@ -1,626 +1,623 @@
 (function(env) {
-    "use strict";
+  "use strict";
 
-    var usTZ = {
-        "America/New_York" : 1,
-        "America/Detroit" : 1,
-        "America/Kentucky/Louisville" : 1,
-        "America/Kentucky/Monticello" : 1,
-        "America/Indiana/Indianapolis" : 1,
-        "America/Indiana/Vincennes" : 1,
-        "America/Indiana/Winamac" : 1,
-        "America/Indiana/Marengo" : 1,
-        "America/Indiana/Petersburg" : 1,
-        "America/Indiana/Vevay" : 1,
-        "America/Chicago" : 1,
-        "America/Indiana/Tell_City" : 1,
-        "America/Indiana/Knox" : 1,
-        "America/Menominee" : 1,
-        "America/North_Dakota/Center" : 1,
-        "America/North_Dakota/New_Salem" : 1,
-        "America/North_Dakota/Beulah" : 1,
-        "America/Denver" : 1,
-        "America/Boise" : 1,
-        "America/Phoenix" : 1,
-        "America/Los_Angeles" : 1,
-        "America/Anchorage" : 1,
-        "America/Juneau" : 1,
-        "America/Sitka" : 1,
-        "America/Yakutat" : 1,
-        "America/Nome" : 1,
-        "America/Adak" : 1,
-        "America/Metlakatla" : 1,
-        "Pacific/Honolulu" : 1
-    };
-
-    var weatherForStringLocale = {
-        en: 'Weather for',
-        da: 'Vejret for',
-    };
-
-    var todayStringLocale = {
-        en: 'today',
-        da: 'i dag',
-    };
-
-    var rightNowStringLocale = {
-        en: 'Right now',
-        da: 'Lige nu',
-    };
-
-    var windStringLocale = {
-        en: 'Wind',
-        da: 'Vind',
-    };
-
-    var humidityStringLocale = {
-        en: 'Humidity',
-        da: 'Luftfugtighed',
-    };
-
-    env.ddg_spice_forecast = function(api_result, city, country, language) {
-        moment.locale(language);
-        // Set up some stuff we'll need
-        var weatherData = {},
-            spiceData,
-            iconFiletype = 'svg',
-            iconPath = 'assets/',
-            units = (api_result.flags && api_result.flags.units) || 'us',
-            unit_labels = {
-                'us': {
-                    speed: 'mph',
-                    temperature: 'F'
-                },
-                'si': {
-                    speed: 'm/s',
-                    temperature: 'C'
-                },
-                'ca': {
-                    speed: 'km/h',
-                    temperature: 'C'
-                },
-                'uk': {
-                    speed: 'mph',
-                    temperature: 'C'
-                },
-                'uk2': {
-                    speed: 'mph',
-                    temperature: 'C'
-                }
-            },
-            units = api_result.flags && api_result.flags.units,
-            hasShown = false;
-
-        // Check if the unit that we got is actually in the hash.
-        // If the API changes the api_result.flags or api_result.flags.units, it will break everything.
-        if (!(units in unit_labels)) {
-            units = 'us';
+  Handlebars.registerHelper('get_icon', function(iconType, options) {
+    var iconFiletype = 'svg';
+    var iconPath = 'assets/';
+    return iconPath + iconFiletype + '/' + iconType + '.' + iconFiletype;
+  });
+  var usTZ = {
+    "America/New_York" : 1,
+    "America/Detroit" : 1,
+    "America/Kentucky/Louisville" : 1,
+    "America/Kentucky/Monticello" : 1,
+    "America/Indiana/Indianapolis" : 1,
+    "America/Indiana/Vincennes" : 1,
+    "America/Indiana/Winamac" : 1,
+    "America/Indiana/Marengo" : 1,
+    "America/Indiana/Petersburg" : 1,
+    "America/Indiana/Vevay" : 1,
+    "America/Chicago" : 1,
+    "America/Indiana/Tell_City" : 1,
+    "America/Indiana/Knox" : 1,
+    "America/Menominee" : 1,
+    "America/North_Dakota/Center" : 1,
+    "America/North_Dakota/New_Salem" : 1,
+    "America/North_Dakota/Beulah" : 1,
+    "America/Denver" : 1,
+    "America/Boise" : 1,
+    "America/Phoenix" : 1,
+    "America/Los_Angeles" : 1,
+    "America/Anchorage" : 1,
+    "America/Juneau" : 1,
+    "America/Sitka" : 1,
+    "America/Yakutat" : 1,
+    "America/Nome" : 1,
+    "America/Adak" : 1,
+    "America/Metlakatla" : 1,
+    "Pacific/Honolulu" : 1
+  };
+  var getHoursGraphOptions = function() {
+    var e = {
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        filler: {
+          propagate: false
         }
-        // // use svg if it's supported and we need it (high pixel density)
-        // TODO: Error
-        // if (Modernizr.svg == true && (DDG.is2x || DDG.is3x)) {
-        //     iconFiletype = 'svg';
-        // }
+      },
+      layout: {
+        padding: {
+          top: 4,
+          bottom: 4
+        }
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          display: false,
+          gridLines: {
+            drawBorder: false
+          },
+          ticks: {
+            display: false
+          }
+        }],
+        yAxes: [{
+          display: false,
+          gridLines: {
+            drawBorder: false
+          },
+          ticks: {
+            display: false
+          }
+        }]
+      },
+      animation: {
+        duration: 0
+      },
+      hover: {
+        animationDuration: 0
+      },
+      responsiveAnimationDuration: 0,
+      elements: {
+        point: {
+          radius: 0,
+          hoverRadius: 0
+        }
+      },
+      tooltips: {
+        enabled: false
+      }
+    };
+    return e;
+  };
 
-        var availableIcons = [
-            'rain', 'snow', 'sleet', 'wind', 'fog', 'cloudy', 'partly-cloudy-day',
-            'partly-cloudy-night', 'clear-day', 'clear-night', 'hail', 'thunderstorm', 'tornado'
-        ];
+  var windStringLocale = {
+    en: 'Wind',
+    da: 'Vind',
+  };
 
-        var getIcon = function(type) {
-            return {
-                'icon': type,
-                'path': iconPath,
-                'file': iconFiletype
+  var humidityStringLocale = {
+    en: 'Humidity',
+    da: 'Luftfugtighed',
+  };
+
+  env.ddg_spice_forecast = function(api_result, city, country, language) {
+    moment.locale(language);
+    // Set up some stuff we'll need
+    var weatherData = {},
+      unit_labels = {
+        'us': {
+          speed: 'mph',
+          temperature: 'F'
+        },
+        'si': {
+          speed: 'm/s',
+          temperature: 'C'
+        },
+        'ca': {
+          speed: 'km/h',
+          temperature: 'C'
+        },
+        'uk': {
+          speed: 'mph',
+          temperature: 'C'
+        },
+        'uk2': {
+          speed: 'mph',
+          temperature: 'C'
+        }
+      },
+      units = api_result.flags && api_result.flags.units;
+
+    // Check if the unit that we got is actually in the hash.
+    // If the API changes the api_result.flags or api_result.flags.units, it will break everything.
+    if (!(units in unit_labels)) {
+      units = 'us';
+    }
+
+    var availableIcons = [
+      'rain', 'snow', 'sleet', 'wind', 'fog', 'cloudy', 'partly-cloudy-day',
+      'partly-cloudy-night', 'clear-day', 'clear-night', 'hail', 'thunderstorm', 'tornado'
+    ];
+
+    var getIconType = function(icon) {
+      if ($.inArray(icon, availableIcons) === -1) {
+        icon = 'cloudy';
+      }
+      return icon;
+    };
+
+    // Convert a wind bearing in degrees to a string
+    var wind_bearing_to_str = function(bearing) {
+      var wind_i = Math.round(bearing / 45);
+      return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N'][wind_i];
+    };
+
+    // Build the current conditions
+    var build_currently = function(f, i) {
+      var now = moment().tz(f.timezone),
+        speed_units = unit_labels[units].speed,
+        currentObj = {},
+        tmp_date,
+        wind_speed;
+
+      currentObj.isCurrent = 1;
+
+      tmp_date =  moment(now).add(i, 'days');
+
+
+      if (i === 0 || i === '0') {
+        currentObj.summary = tmp_date.format('dddd') + ' &middot; ' + moment().format('LT') + ' &middot; ' + f.currently.summary;
+        currentObj.temp = Math.round(f.currently.temperature) + '&deg;';
+        currentObj.icon = getIconType(f.currently.icon);
+        if (f.currently.windSpeed) {
+          wind_speed = Math.round(f.currently.windSpeed);
+
+          if (wind_speed !== 0 && f.currently.windBearing) {
+            wind_speed += ' ' + speed_units + ' (' + wind_bearing_to_str(f.currently.windBearing) + ')';
+          } else {
+            wind_speed += ' ' + speed_units;
+          }
+          currentObj.wind = windStringLocale[language] || windStringLocale['en'];
+          currentObj.wind += ': ' + wind_speed;
+
+          currentObj.windSpeed = Math.round(f.currently.windSpeed);
+          currentObj.windBearing = f.currently.windBearing;
+        }
+        if (f.currently.humidity) {
+          currentObj.humidity = humidityStringLocale[language] || humidityStringLocale['en'];
+          currentObj.humidity += ': ' + Math.round(f.currently.humidity * 100) + '%';
+        }
+      } else {
+        currentObj.summary = tmp_date.format('dddd') + ' &middot; ' + f.daily.data[i].summary;
+        currentObj.temp = Math.round((f.daily.data[i].temperatureMax + f.daily.data[i].temperatureMin) / 2)  + '&deg;';
+        currentObj.icon = getIconType(f.daily.data[i].icon);
+        if (f.daily.data[i].windSpeed) {
+          wind_speed = Math.round(f.daily.data[i].windSpeed);
+
+          if (wind_speed !== 0 && f.daily.data[i].windBearing) {
+            wind_speed += ' ' + speed_units + ' (' + wind_bearing_to_str(f.daily.data[i].windBearing) + ')';
+          } else {
+            wind_speed += ' ' + speed_units;
+          }
+          currentObj.wind = windStringLocale[language] || windStringLocale['en'];
+          currentObj.wind += ': ' + wind_speed;
+          currentObj.windSpeed = Math.round(f.daily.data[i].windSpeed);
+          currentObj.windBearing = f.daily.data[i].windBearing;
+        }
+        if (f.daily.data[i].humidity) {
+          currentObj.humidity = humidityStringLocale[language] || humidityStringLocale['en'];
+          currentObj.humidity += ': ' + Math.round(f.daily.data[i].humidity * 100) + '%';
+        }
+      }
+
+      if (city && country) {
+        currentObj.city = city + ', ' + country;
+      } else if (city) {
+        currentObj.city = city;
+      }
+      currentObj.daysourceUrl = 'https://darksky.net/' + f.latitude + ',' + f.longitude + '/' + tmp_date.format("YYYY-MM-DD");
+      currentObj.hourly = rowHourly(f, i);
+      return currentObj;
+    };
+
+    var build_daily = function(f) {
+      var dailyObj = [],
+        today = moment().tz(f.timezone),
+        days = f.daily.data,
+        num_days = Math.max(8, days.length),
+        day;
+
+      // store daily values
+      for (var i = 0, tmp_date; i < num_days; i++)(function(i) {
+
+        dailyObj[i] = days[i];
+        day = days[i];
+        tmp_date = moment(today).add(i, 'days');
+        dailyObj[i].highTemp = Math.round(day.temperatureMax) + '&deg;';
+        dailyObj[i].lowTemp = Math.round(day.temperatureMin) + '&deg;';
+        dailyObj[i].icon = getIconType(days[i].icon);
+        dailyObj[i].day = tmp_date.format("ddd");
+        dailyObj[i].index = i;
+
+      })(i);
+
+      return dailyObj;
+    };
+    var rowHourly = function (f, index) {
+      var hourlyObj = [],
+        hours = f.hourly.data,
+        days = f.daily.data,
+        date,
+        hours_date,
+        hoursStep = 3;
+      if (index === 0 || index === '0') {
+        for (var i = 0, tmp_date; i < 8 * hoursStep; i += hoursStep ) {
+          tmp_date = moment.unix(hours[i].time).tz(f.timezone);
+          hourlyObj.push({temp: Math.round(hours[i].temperature), time: tmp_date.format('LT')});
+        }
+      } else {
+        for (var k = 0; k < hours.length; k++) {
+
+            date = moment.unix(days[index].time).tz(f.timezone);
+            hours_date = moment.unix(hours[k].time).tz(f.timezone);
+            if ((date.format('l') === hours_date.format('l')) && (hours_date.hours() % hoursStep === 0)) {
+              hourlyObj.push({temp: Math.round(hours[k].temperature), time: hours_date.format('LT')});
             }
-        };
 
-        var getIconType = function(icon) {
-            if ($.inArray(icon, availableIcons) === -1) {
-                icon = 'cloudy';
-            }
-            return icon;
-        };
+        }
+      }
+      return hourlyObj;
+    };
+    var getHoursGraphDefaults = function () {
+      return {
+        borderColor: "#aaa",
+        backgroundColor: "#f2f2f2",
+        borderWidth: 2,
+        borderCapStyle: "round",
+        borderJoinStyle: "round",
+        fill: "start",
+        label: "",
+        spanGaps: true
+      }
+    };
+    var renderChart = function (data) {
+      var options = getHoursGraphOptions();
+      var labels = data.hourly.map(function(labels) {
+        return labels.time;
+        }
+      );
+      var items = data.hourly.map(function(items) {
+          return items.temp;
+        }
+      );
+      var datasets = getHoursGraphDefaults();
+      datasets.data = items;
 
-        // Convert a wind bearing in degrees to a string
-        var wind_bearing_to_str = function(bearing) {
-            var wind_i = Math.round(bearing / 45);
-            return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N'][wind_i];
-        };
+      var ctx = document.getElementById('myChart').getContext('2d');
+      ctx.canvas.style.width = "100%";
+      ctx.canvas.style.height = "100%";
+      setTimeout(function() {
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
 
-        // Build the current conditions
-        var build_currently = function(f) {
-            var now = moment().unix(),
-                hourly = f.hourly.data,
-                current_summary = f.currently.summary,
-                speed_units = unit_labels[units].speed,
-                feel_str,
-                currentObj = {};
-
-            currentObj.isCurrent = 1;
-            // If the next-hour summary is interesting enough (and we're not on mobile), use that instead
-            // TODO: Error
-            // if (!is_mobile && f.minutely && !f.minutely.summary.match(/ for the hour\.$/)) {
-            if (f.minutely && !f.minutely.summary.match(/ for the hour\.$/)) {
-                current_summary = f.minutely.summary;
-            }
-
-            // Find the first hourly point in the future, so we can figure out
-            // if the temperature is rising or falling
-            var temp_direction = 0;
-            for (var i = 0; i < hourly.length; i++) {
-                if (hourly[i].time < now) {
-                    continue;
-                }
-                temp_direction = (hourly[i].temperature > f.currently.temperature) ? 1 : -1;
-                break;
-            }
-
-            var temp_str = '<span class="fe_temp_str">' + Math.round(f.currently.temperature) + '&deg;</span>'
-
-            if (f.currently.apparentTemperature) {
-                feel_str = 'Feels like ' + Math.round(f.currently.apparentTemperature) + '&deg;'
-            }
-
-            currentObj.temp = temp_str;
-            currentObj.feelslike = feel_str;
-
-            if (current_summary.length > 45) {
-                currentObj.summaryClass = 'fe_small';
-            } else {
-                currentObj.summaryClass = '';
-            }
-
-            currentObj.summary = current_summary;
-
-            if (f.currently.windSpeed) {
-                var wind_speed = Math.round(f.currently.windSpeed);
-
-                if (wind_speed != 0 && f.currently.windBearing) {
-                    wind_speed += ' ' + speed_units + ' (' + wind_bearing_to_str(f.currently.windBearing) + ')'
-                } else {
-                    wind_speed += ' ' + speed_units
-                }
-                currentObj.wind = windStringLocale[language] || windStringLocale['en'];
-                currentObj.wind += ': ' + wind_speed;
-            }
-
-            currentObj.icon = getIcon(getIconType(f.currently.icon));
-
-            if (f.currently.humidity) {
-                currentObj.humidity = humidityStringLocale[language] || humidityStringLocale['en'];
-                currentObj.humidity += ': ' + Math.round(f.currently.humidity * 100) + '%';
-            }
-
-            if (f.currently.precipProbability) {
-                currentObj.precipitation = 'Chance of Precipitation: ' + Math.round(f.currently.precipProbability * 100) + '%';
-            }
-
-            currentObj.title = rightNowStringLocale[language] || rightNowStringLocale['en'];
-            currentObj.title += ':';
-
-            return currentObj;
-        };
-
-        var build_daily = function(f) {
-            var dailyObj = [],
-                today = moment(),
-                days = f.daily.data,
-                num_days = Math.max(6, days.length),
-                day,
-                temp_span,
-                max_temp_height = 65,
-                high_temp = -Infinity,
-                low_temp = Infinity;
-
-            // find weekly high and low temps
-            for (var i = 0; i < num_days; i++) {
-                day = days[i];
-                if (day.temperatureMax > high_temp) {
-                    high_temp = day.temperatureMax;
-                }
-                if (day.temperatureMin < low_temp) {
-                    low_temp = day.temperatureMin;
-                }
-            }
-
-            // figure out the temp span now that we have highs and lows
-            temp_span = high_temp - low_temp;
-
-            // store daily values
-            for (var i = 0, tmp_date; i < num_days; i++)(function(i) {
-                dailyObj[i] = days[i];
-                day = days[i];
-
-                tmp_date = moment(today).add(i, 'days');
-                dailyObj[i].date = tmp_date.format("MMM D");
-                dailyObj[i].highTemp = Math.round(day.temperatureMax) + '&deg;';
-                dailyObj[i].lowTemp = Math.round(day.temperatureMin) + '&deg;';
-                dailyObj[i].icon = getIcon(getIconType(days[i].icon));
-                dailyObj[i].tempBar = {
-                    height: max_temp_height * (day.temperatureMax - day.temperatureMin) / temp_span,
-                    top: max_temp_height * (high_temp - day.temperatureMax) / temp_span
-                };
-                dailyObj[i].daysourceUrl = 'https://darksky.net/' + api_result.latitude + ',' + api_result.longitude + '/' + tmp_date.format("YYYY-MM-DD");
-
-                // TODO: ERROR
-                if (i == 0) {
-                    dailyObj[i].day = todayStringLocale[language] || todayStringLocale['en'];
-                // } else if (is_mobile) {
-                //     dailyObj[i].day = tmp_date.format("ddd").toUpperCase();
-                } else {
-                    dailyObj[i].day = tmp_date.format("dddd");
-                }
-
-            })(i);
-
-            return dailyObj;
-        };
-
-        // Build any weather alerts or warnings
-        var build_alerts = function(f) {
-            if (!f.alerts || !f.alerts.length) {
-                return "";
-            }
-
-            var alert_message;
-            for (var i = 0; i < f.alerts.length; i++) {
-                if (f.alerts[i].title.match(/Special Weather Statement/i) ||
-                    f.alerts[i].title.match(/Advisory/i) ||
-                    f.alerts[i].title.match(/Statement/i))
-                    continue;
-
-                alert_message = f.alerts[i];
-                break;
-            }
-
-            if (alert_message) {
-                return '<a href="' + alert_message.uri + '" class="fe_alert  tx-clr--red" target="_blank"><span class="ddgsi fe_icon--alert">!</span>' + alert_message.title + '</a>';
-            }
-        };
-
-        // TODO: Error
-        // DDG.require('moment.js', function() {
-            // Go!
-            weatherData.current = build_currently(api_result);
-            weatherData.alerts = build_alerts(api_result);
-            weatherData.daily = build_daily(api_result);
-            weatherData.activeUnit = unit_labels[units].temperature;
-            if (city && country) {
-                weatherData.city = city + ', ' + country;
-            } else if (city) {
-                weatherData.city = city;
-            }
-
-            // build the header text:
-            var weatherForWord = weatherForStringLocale[language] || weatherForStringLocale['en'];
-            weatherData.header = weatherData.city ? weatherForWord + ' ' + weatherData.city : '';
-
-            // if there's alerts add them to the end:
-            // TODO: Why we need alerts?
-            // if (weatherData.alerts) {
-            //     weatherData.header += ' ' + weatherData.alerts;
-            // }
-
-            // structure the data differently for mobile and desktop views
-            // TODO: Error
-            // if (is_mobile) {
-            //     spiceData = weatherData;
-            // } else {
-                spiceData = [weatherData.current, weatherData.daily[0], weatherData.daily[1], weatherData.daily[2], weatherData.daily[3], weatherData.daily[4], weatherData.daily[5], weatherData.daily[6]];
-            // }
-
-            var uom = unit_labels[units].temperature === 'F' ? 'F' : 'C',
-                altMeta = '<a id="fe_temp_switch" class="tx-clr--dk2"><span id="fe_fahrenheit">&deg;F</span> / <span id="fe_celsius">&deg;C</span></a>';
-
-            // Render/Display
-           // TODO: error
-            // Spice.registerHelper("forecast_icon", function(obj, options) {
-            //     obj.size = options && options.hash && options.hash.size || "40px";
-            //     return DDG.exec_template(Spice.forecast.forecast_icons, obj);
-            // });
-        var templateHeader = Handlebars.compile($("#template-header").html());
-        $("#forecast-header").append(templateHeader(weatherData));
-
-        var templateIcon = Handlebars.compile($("#template-icon").html());
-        Handlebars.registerHelper('forecast_icon', function(obj, options) {
-            options.hash.size = options && options.hash && options.hash.size || "40px";
-            return templateIcon(obj);
+            datasets: [datasets]
+          },
+          options: options
         });
-        var templateItem = Handlebars.compile($("#template-item").html());
-        var ledger_item = templateItem(spiceData);
-        $("#forecast-wrapper").append(ledger_item);
-            // console.log(spiceData);
-            // Spice.add({
-            //     id: 'forecast',
-            //     name: 'Weather',
-            //     data: spiceData,
-            //     signal: "high",
-            //     meta: {
-            //         sourceUrl: 'https://darksky.net/' + api_result.latitude + ',' + api_result.longitude,
-            //         sourceName: 'Dark Sky',
-            //         primaryText: weatherData.header,
-            //         secondaryText: altMeta,
-            //         itemsWidthVaries: true
-            //     },
-            //
-            //     templates: {
-            //         item: Spice.forecast.forecast_item,
-            //         detail_mobile: Spice.forecast.forecast_detail_mobile
-            //     },
-            //     onShow: function() {
-            //
-                    if (hasShown) {
-                        return;
-                    } else {
-                        hasShown = true;
-                    }
-
-                    //convert temperature to specified unit
-                    var convertTemp = function(unit, d) {
-                        if (unit === 'C') {
-                            return (d - 32) * (5 / 9);
-                        } else if (unit === 'F') {
-                            return d * (9 / 5) + 32;
-                        }
-                    };
-
-                    var convertSpeed = function(from, to, val) {
-                        // http://en.wikipedia.org/wiki/Miles_per_hour#Conversions
-                        var conversionFactors = {
-                            'mph-m/s': 0.4471,
-                            'm/s-mph': 2.237,
-                            'mph-km/h': 1.609,
-                            'km/h-mph': 0.6214
-                        };
-                        return val * conversionFactors[from + '-' + to];
-                    };
-
-                    //update the style of the F/C (make one bold and the other grayed out)
-                    var updateTempSwitch = function(new_unit) {
-                        if (new_unit === "F") {
-                            $('#fe_fahrenheit').removeClass('tx-clr--lt3').addClass('is-active');
-                            $('#fe_celsius').removeClass('is-active').addClass('tx-clr--lt3');
-                        } else {
-                            $('#fe_celsius').removeClass('tx-clr--lt3').addClass('is-active');
-                            $('#fe_fahrenheit').removeClass('is-active').addClass('tx-clr--lt3');
-                        }
-                    };
-
-                    var updateUnitOfMeasure = function() {
-                        //initialize the temperatures with the API data
-                        var temps = {
-                            current: api_result.currently.temperature,
-                            feelslike: api_result.currently.apparentTemperature,
-                            daily: $.map(api_result.daily.data, function(e) {
-                                return {
-                                    'tempMin': e.temperatureMin,
-                                    'tempMax': e.temperatureMax
-                                };
-                            }),
-                            wind: api_result.currently.windSpeed
-                        };
-
-                        //if they want the units that aren't given by the API, calculate the new temps
-                        if (uom !== unit_labels[units].temperature) {
-                            temps.current = convertTemp(uom, temps.current);
-                            temps.feelslike = convertTemp(uom, temps.feelslike);
-                            temps.daily = $.map(temps.daily, function(e) {
-                                var tempMin = convertTemp(uom, e.tempMin),
-                                    tempMax = convertTemp(uom, e.tempMax);
-                                return {
-                                    'tempMin': tempMin,
-                                    'tempMax': tempMax
-                                };
-                            });
-                        }
-
-                        //decide which wind speed unit they want
-                        var given_wind_uom = unit_labels[units].speed,
-                            wind_uom;
-
-                        if (uom === 'F') {
-                            wind_uom = 'mph';
-                        } else if (given_wind_uom === 'mph') {
-                            //when the user switches from a given F -> C, we assume they want m/s
-                            //TODO: make this smarter somehow
-                            wind_uom = 'm/s';
-                        } else {
-                            wind_uom = given_wind_uom;
-                        }
-
-                        if (wind_uom !== given_wind_uom) {
-                            temps.wind = convertSpeed(given_wind_uom, wind_uom, temps.wind);
-                        }
-
-                        //insert the new temps in the html
-                        // var day_class = is_mobile ? '.fe_day--bar' : '.fe_day';
-                        var day_class = '.fe_day';
-
-                        $('.fe_currently').find('.fe_temp_str').html(Math.round(temps.current) + '&deg;');
-                        $(day_class).each(function(i) {
-                            var day = temps.daily[i],
-                                $this = $(this);
-                            $this.find('.fe_high_temp').html(Math.round(day.tempMax) + '&deg;');
-                            $this.find('.fe_low_temp').html(Math.round(day.tempMin) + '&deg;');
-                        });
-                        var windWord = windStringLocale[language] || windStringLocale['en'];
-                        $('.fe_currently').find('.fe_wind').html(windWord + ': ' + Math.round(temps.wind) + ' ' + wind_uom +
-                            ' (' + wind_bearing_to_str(api_result.currently.windBearing) + ')');
-
-                        updateTempSwitch(uom);
-                    };
-
-                    // If there is celsius or fahrenheit mentioned in the query, do use that
-                    // unit of measurement. If the metric setting is enabled or the user's
-                    // region is not USA and the API returned temps in F, switch to 'C':
-                    var uom_in_query = IA.getQuery().match(/\b(celsius|fahrenheit)\b/);
-                    var response_timezone = api_result.timezone;
-                    if (uom_in_query) {
-                        uom = (uom_in_query[1] === 'celsius') ? 'C' : 'F';
-                        updateUnitOfMeasure();
-                    } else if(!usTZ[response_timezone]) {
-                        uom = 'C';
-                        updateUnitOfMeasure();
-                    // } else if (!DDG.settings.isDefault('kaj')) {
-                    //     uom = DDG.settings.get('kaj') === 'm' ? 'C' : 'F';
-                    //     updateUnitOfMeasure();
-                    // } else if (!DDG.settings.isDefault('kl')) {
-                    //     uom = DDG.settings.get('kl') !== 'us-en' ? 'C' : 'F';
-                    //     updateUnitOfMeasure();
-                    } else {
-                        updateTempSwitch(uom);
-                    }
-
-                    //when we press the small button, switch the temperature units
-                    $('#fe_temp_switch').click(function() {
-                        uom = uom === 'F' ? 'C' : 'F';
-
-                        updateUnitOfMeasure();
-
-                        // update the setting so we remember this choice going forward:
-                        // DDG.settings.set('kaj', uom === 'C' ? 'm' : 'u', {
-                        //     saveToCloud: true
-                        // });
-                    });
-            //     }
-            // });
-        // });
+      }, 0);
     };
 
-    env.givero = {
-        showForecastInAddress: function(address) {
-            var language = 'en';
-            IA.imports.getVariable('USER_BROWSER_LANGUAGE', function (value) {
-                if (value) {
-                    language = value.split('-')[0];
-                }
-                callGoogle();
-            });
-            function getComponentByType(type, address_components){
-                for (var i=0; i < address_components.length; i++) {
-                    for (var j=0; j < address_components[i].types.length; j++) {
-                        if (address_components[i].types[j] === type) {
-                            return address_components[i].long_name
-                        }
-                    }
-                }
-            }
-            function callGoogle() {
-                $.ajax({
-                    url: '/ia/forecast/google/&address=' + address,
-                    success: function(data) {
-                        if (data && data.results && data.results[0].formatted_address && data.results[0].geometry && data.results[0].geometry.location) {
-                            var country = getComponentByType('country', data.results[0].address_components);
-                            var city = getComponentByType('locality', data.results[0].address_components);
-                            env.givero.callDarksky(
-                                data.results[0].geometry.location.lat,
-                                data.results[0].geometry.location.lng,
-                                language,
-                                city,
-                                country
-                            )
-                        } else {
-                            window.IA.failed();
-                        }
-                    },
-                    error: function(error) {
-                        env.givero.showCurrentForecast();
-                    },
-                });
-            }
+    var uom = unit_labels[units].temperature === 'F' ? 'F' : 'C';
 
-        },
-        showCurrentForecast: function() {
-            var language = 'en';
-            var latitude = null;
-            var longitude = null;
-            var city = '';
-            var country = '';
-            IA.imports.getVariable('USER_BROWSER_LANGUAGE', function (value) {
-                if (!value) {
-                    language = value.split('-')[0];
-                }
-            });
-            IA.imports.getVariable('USER_CITY_NAME', function (value) {
-                city = value;
-            });
-            IA.imports.getVariable('USER_COUNTRY_NAME', function (value) {
-                country = value;
-            });
-            IA.imports.getVariable('USER_GEOLOCATION_LATITUDE', function (value) {
-                if (!value) {
-                    window.IA.failed();
-                } else {
-                    latitude = value;
-                    env.givero.callDarksky(latitude, longitude, language, city, country);
-                }
-            });
-            IA.imports.getVariable('USER_GEOLOCATION_LONGITUDE', function (value) {
-                if (!value) {
-                    window.IA.failed();
-                } else {
-                    longitude = value;
-                    env.givero.callDarksky(latitude, longitude, language, city, country);
-                }
-            });
-        },
-        callDarksky: function (latitude, longitude, language, city, country) {
-            if (latitude && longitude) {
-                $.ajax({
-                    url: '/ia/forecast/darksky//' + latitude + ',' + longitude + '?lang=' + language,
-                    success: function(data) {
-                        // Exit if we've got a bad forecast
-                        if (!data || !data.hourly || !data.hourly.data || !data.daily || !data.daily.data) {
-                            window.IA.failed();
-                            throw Error('IA:forecast Wrong data from feed');
-                        } else {
-                            env.ddg_spice_forecast(data, city, country, language);
-                            window.IA.ready();
-                        }
-                    },
-                    error: function() {
-                        window.IA.failed();
-                        throw Error('IA:forecast Cannot retrieve data from feed');
-                    },
-                });
-            }
-        },
-        getAddressFromQuery: function () {
-            var query = window.IA.getQuery();
-            var address = query
-            // 0. handles main trigger words
-                .replace(/weather/g, '')
-                .replace(/forecast/g, '')
-                .replace(/weather forecast/g, '')
-                .replace(/weer/g, '')
-                .replace(/meteo/g, '')
-                .replace(/wetter/g, '')
-                .replace(/clima/g, '')
-                .replace(/vejr/g, '')
-                .replace(/vejret/g, '')
-                .replace(/vejrudsigt/g, '')
-                .replace(/vejrudsigten/g, '')
+    weatherData.daily = build_daily(api_result);
+    weatherData.activeUnit = unit_labels[units].temperature;
+    var updateTempSwitch = function(new_unit) {
+      if (new_unit === "F") {
+        $('.module__temperature-unit[data-unit="f"]').addClass('module__temperature-unit--on');
+        $('.module__temperature-unit[data-unit="c"]').removeClass('module__temperature-unit--on');
+      } else {
+        $('.module__temperature-unit[data-unit="c"]').addClass('module__temperature-unit--on');
+        $('.module__temperature-unit[data-unit="f"]').removeClass('module__temperature-unit--on');
+      }
+    };
 
-            // 1. handles option trigger words
-                .replace(/local/g, '')
-                .replace(/near me/g, '')
-                .replace(/nearby me/g, '')
-                .replace(/current/g, '')
+    var setActiveItem = function(i) {
+      $('.js-forecast-module-item').removeClass('active');
+      $(".js-forecast-module-item[data-item-index=" + i +"]").addClass('active');
+    };
 
-                .trim();
-            return address;
+    //convert temperature to specified unit
+    var convertTemp = function(unit, d) {
+      if (unit === 'C') {
+        return (d - 32) * (5 / 9);
+      } else if (unit === 'F') {
+        return d * (9 / 5) + 32;
+      }
+    };
+
+    var convertSpeed = function(from, to, val) {
+      // http://en.wikipedia.org/wiki/Miles_per_hour#Conversions
+      var conversionFactors = {
+        'mph-m/s': 0.4471,
+        'm/s-mph': 2.237,
+        'mph-km/h': 1.609,
+        'km/h-mph': 0.6214
+      };
+      return val * conversionFactors[from + '-' + to];
+    };
+
+
+    //update the style of the F/C (make one bold and the other grayed out)
+
+
+    var updateUnitOfMeasure = function(data) {
+      //initialize the temperatures with the API data
+      var temps = {
+        current: parseInt(data.temp),
+        daily: $.map(api_result.daily.data, function(e) {
+          return {
+            'tempMin': e.temperatureMin,
+            'tempMax': e.temperatureMax
+          };
+        }),
+        hourly: $.map(data.hourly, function (k) {
+          return {
+            'temp': parseInt(k.temp)
+          };
+        }),
+        wind: parseInt(data.windSpeed)
+      };
+
+
+
+      //if they want the units that aren't given by the API, calculate the new temps
+      if (uom !== unit_labels[units].temperature) {
+        temps.current = convertTemp(uom, temps.current);
+        temps.daily = $.map(temps.daily, function(e) {
+          var tempMin = convertTemp(uom, e.tempMin),
+            tempMax = convertTemp(uom, e.tempMax);
+          return {
+            'tempMin': tempMin,
+            'tempMax': tempMax
+          };
+        });
+        temps.hourly = $.map(temps.hourly, function(k) {
+          var temp = convertTemp(uom, k.temp);
+          return {
+            'temp': temp
+          };
+        });
+      }
+
+      //decide which wind speed unit they want
+      var given_wind_uom = unit_labels[units].speed,
+        wind_uom;
+
+      if (uom === 'F') {
+        wind_uom = 'mph';
+      } else if (given_wind_uom === 'mph') {
+        //when the user switches from a given F -> C, we assume they want m/s
+        //TODO: make this smarter somehow
+        wind_uom = 'm/s';
+      } else {
+        wind_uom = given_wind_uom;
+      }
+
+      if (wind_uom !== given_wind_uom) {
+        temps.wind = convertSpeed(given_wind_uom, wind_uom, temps.wind);
+      }
+
+      var day_class = '.module__items-item';
+      var hours_class = '.module__detail__temp-label';
+      var detailed_module_class= '.js-forecast-module-detail';
+
+      $(detailed_module_class).find('.module__temperature-value').html(Math.round(temps.current) + '&deg;');
+      $(day_class).each(function(i) {
+        var day = temps.daily[i],
+          $this = $(this);
+        $this.find('.module__items-unit--on').html(Math.round(day.tempMax) + '&deg;');
+        $this.find('.module__items-unit--low').html(Math.round(day.tempMin) + '&deg;');
+      });
+      $(hours_class).each(function (i) {
+        var hour = temps.hourly[i],
+          $this = $(this);
+        $this.html(Math.round(hour.temp) + '&deg;');
+      });
+      var windWord = windStringLocale[language] || windStringLocale['en'];
+      $(detailed_module_class).find('.module__winds--val').html(windWord + ': ' + Math.round(temps.wind) + ' ' + wind_uom +
+        ' (' + wind_bearing_to_str(data.windBearing) + ')');
+
+      updateTempSwitch(uom);
+    };
+
+    // If there is celsius or fahrenheit mentioned in the query, do use that
+    // unit of measurement. If the metric setting is enabled or the user's
+    // region is not USA and the API returned temps in F, switch to 'C':
+
+
+    var createHtmlDetailedItem = function (data) {
+      var rawTemplate = document.getElementById("template-detailed-item").innerHTML;
+      var compiledTemplate = Handlebars.compile(rawTemplate);
+      var generatedHTML = compiledTemplate(data);
+      var resultContainer = document.getElementById("forecast-today");
+      resultContainer.innerHTML = generatedHTML;
+      renderChart(data);
+
+      //when we press the small button, switch the temperature units
+      $('.module__temperature-unit').click(function() {
+        uom = uom === 'F' ? 'C' : 'F';
+        updateUnitOfMeasure(data);
+      });
+    };
+    createHtmlDetailedItem(build_currently(api_result, 0));
+    var updateDetailedItemData = function (data) {
+      createHtmlDetailedItem(data);
+      updateUnitOfMeasure(data);
+    };
+    var createHtmlDailyItem = function (data) {
+      var rawTemplate = document.getElementById("template-item").innerHTML;
+      var compiledTemplate = Handlebars.compile(rawTemplate);
+      var generatedHTML = compiledTemplate(data);
+      var resultContainer = document.getElementById("forecast-daily");
+      resultContainer.innerHTML = generatedHTML;
+      setActiveItem(0);
+      $('.js-forecast-module-item').click(function(e) {
+        var index = parseInt($(this).attr('data-item-index'));
+        updateDetailedItemData(build_currently(api_result, index));
+        setActiveItem(index);
+      });
+    };
+    createHtmlDailyItem(build_daily(api_result));
+
+    var response_timezone = api_result.timezone;
+    if(!usTZ[response_timezone]) {
+      uom = 'C';
+      updateUnitOfMeasure(build_currently(api_result, 0));
+    } else {
+      updateTempSwitch(uom);
+    }
+  };
+
+  env.givero = {
+    showForecastInAddress: function(address) {
+      var language = 'en';
+      IA.imports.getVariable('USER_BROWSER_LANGUAGE', function (value) {
+        if (value) {
+          language = value.split('-')[0];
         }
-    };
-
-    $(document).ready(function () {
-        var address = env.givero.getAddressFromQuery();
-        if (address) {
-            env.givero.showForecastInAddress(address);
-        } else {
+        callGoogle();
+      });
+      function getComponentByType(type, address_components){
+        for (var i=0; i < address_components.length; i++) {
+          for (var j=0; j < address_components[i].types.length; j++) {
+            if (address_components[i].types[j] === type) {
+              return address_components[i].long_name
+            }
+          }
+        }
+      }
+      function callGoogle() {
+        $.ajax({
+          url: '/ia/forecast/google/&address=' + address,
+          success: function(data) {
+            if (data && data.results && data.results[0].formatted_address && data.results[0].geometry && data.results[0].geometry.location) {
+              var country = getComponentByType('country', data.results[0].address_components);
+              var city = getComponentByType('locality', data.results[0].address_components);
+              env.givero.callDarksky(
+                data.results[0].geometry.location.lat,
+                data.results[0].geometry.location.lng,
+                language,
+                city,
+                country
+              )
+            } else {
+              window.IA.failed();
+            }
+          },
+          error: function(error) {
             env.givero.showCurrentForecast();
+          },
+        });
+      }
+
+    },
+    showCurrentForecast: function() {
+      var language = 'en';
+      var latitude = null;
+      var longitude = null;
+      var city = '';
+      var country = '';
+      IA.imports.getVariable('USER_BROWSER_LANGUAGE', function (value) {
+        if (!value) {
+          language = value.split('-')[0];
         }
-    });
+      });
+      IA.imports.getVariable('USER_CITY_NAME', function (value) {
+        city = value;
+      });
+      IA.imports.getVariable('USER_COUNTRY_NAME', function (value) {
+        country = value;
+      });
+      IA.imports.getVariable('USER_GEOLOCATION_LATITUDE', function (value) {
+        if (!value) {
+          window.IA.failed();
+        } else {
+          latitude = value;
+          env.givero.callDarksky(latitude, longitude, language, city, country);
+        }
+      });
+      IA.imports.getVariable('USER_GEOLOCATION_LONGITUDE', function (value) {
+        if (!value) {
+          window.IA.failed();
+        } else {
+          longitude = value;
+          env.givero.callDarksky(latitude, longitude, language, city, country);
+        }
+      });
+    },
+    callDarksky: function (latitude, longitude, language, city, country) {
+      if (latitude && longitude) {
+        $.ajax({
+          url: '/ia/forecast/darksky//' + latitude + ',' + longitude + '?lang=' + language + '&extend=hourly',
+          success: function(data) {
+            // Exit if we've got a bad forecast
+            if (!data || !data.hourly || !data.hourly.data || !data.daily || !data.daily.data) {
+              window.IA.failed();
+              throw Error('IA:forecast Wrong data from feed');
+            } else {
+              env.ddg_spice_forecast(data, city, country, language);
+              window.IA.ready();
+            }
+          },
+          error: function() {
+            window.IA.failed();
+            throw Error('IA:forecast Cannot retrieve data from feed');
+          },
+        });
+      }
+    },
+    getAddressFromQuery: function () {
+      var query = window.IA.getQuery();
+      var address = query
+      // 0. handles main trigger words
+        .replace(/weather/g, '')
+        .replace(/forecast/g, '')
+        .replace(/weather forecast/g, '')
+        .replace(/weer/g, '')
+        .replace(/meteo/g, '')
+        .replace(/wetter/g, '')
+        .replace(/clima/g, '')
+        .replace(/vejr/g, '')
+        .replace(/vejret/g, '')
+        .replace(/vejrudsigt/g, '')
+        .replace(/vejrudsigten/g, '')
+
+        // 1. handles option trigger words
+        .replace(/local/g, '')
+        .replace(/near me/g, '')
+        .replace(/nearby me/g, '')
+        .replace(/current/g, '')
+
+        .trim();
+      return address;
+    }
+  };
+
+  $(document).ready(function () {
+    var address = env.givero.getAddressFromQuery();
+    if (address) {
+      env.givero.showForecastInAddress(address);
+    } else {
+      env.givero.showCurrentForecast();
+    }
+  });
 
 }(this));
 

@@ -4,6 +4,8 @@ description:
 developers:
   - name: DuckDuckGo
     url: https://github.com/duckduckgo/zeroclickinfo-goodies/tree/master/share/goodie/stopwatch
+  - name: DeviantArt
+    url: https://www.deviantart.com/merlinthered/art/plain-weather-icons-157162192
 homepage: https://github.com/giverosearch
 triggers:
   match: /^(?<city_name>[\wæøåÆØÅ]+(?:[\s-][\wæøåÆØÅ]+)*)?\s*(?<main_trigger>weather|forecast|weather forecast|weer|meteo|wetter|clima|vejr|vejret|vejrudsigt|vejrudsigten)\s*\g'city_name'?$/i
