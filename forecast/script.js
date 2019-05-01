@@ -320,17 +320,17 @@
     weatherData.activeUnit = unit_labels[units].temperature;
     var updateTempSwitch = function(new_unit) {
       if (new_unit === "F") {
-        $('.module__temperature-unit[data-unit="f"]').addClass('module__temperature-unit--on');
-        $('.module__temperature-unit[data-unit="c"]').removeClass('module__temperature-unit--on');
+        $('.weather-temperature-unit[data-unit="f"]').addClass('weather-temperature-unit-active');
+        $('.weather-temperature-unit[data-unit="c"]').removeClass('weather-temperature-unit-active');
       } else {
-        $('.module__temperature-unit[data-unit="c"]').addClass('module__temperature-unit--on');
-        $('.module__temperature-unit[data-unit="f"]').removeClass('module__temperature-unit--on');
+        $('.weather-temperature-unit[data-unit="c"]').addClass('weather-temperature-unit-active');
+        $('.weather-temperature-unit[data-unit="f"]').removeClass('weather-temperature-unit-active');
       }
     };
 
     var setActiveItem = function(i) {
-      $('.js-forecast-module-item').removeClass('active');
-      $(".js-forecast-module-item[data-item-index=" + i +"]").addClass('active');
+      $('.weekly-daily-item').removeClass('active');
+      $(".weekly-daily-item[data-item-index=" + i +"]").addClass('active');
     };
 
     //convert temperature to specified unit
@@ -414,16 +414,16 @@
         temps.wind = convertSpeed(given_wind_uom, wind_uom, temps.wind);
       }
 
-      var day_class = '.module__items-item';
-      var hours_class = '.module__detail__temp-label';
-      var detailed_module_class= '.js-forecast-module-detail';
+      var day_class = '.weekly-daily-item';
+      var hours_class = '.hourly-temp-label';
+      var detailed_module_class= '.forecast-detailed-day';
 
-      $(detailed_module_class).find('.module__temperature-value').html(Math.round(temps.current) + '&deg;');
+      $(detailed_module_class).find('.weather-temperature-value').html(Math.round(temps.current) + '&deg;');
       $(day_class).each(function(i) {
         var day = temps.daily[i],
           $this = $(this);
-        $this.find('.module__items-unit--on').html(Math.round(day.tempMax) + '&deg;');
-        $this.find('.module__items-unit--low').html(Math.round(day.tempMin) + '&deg;');
+        $this.find('.daily-temp-high').html(Math.round(day.tempMax) + '&deg;');
+        $this.find('.daily-temp-low').html(Math.round(day.tempMin) + '&deg;');
       });
       $(hours_class).each(function (i) {
         var hour = temps.hourly[i],
@@ -431,7 +431,7 @@
         $this.html(Math.round(hour.temp) + '&deg;');
       });
       var windWord = windStringLocale[language] || windStringLocale['en'];
-      $(detailed_module_class).find('.module__winds--val').html(windWord + ': ' + Math.round(temps.wind) + ' ' + wind_uom +
+      $(detailed_module_class).find('.weather-winds-value').html(windWord + ': ' + Math.round(temps.wind) + ' ' + wind_uom +
         ' (' + wind_bearing_to_str(data.windBearing) + ')');
 
       updateTempSwitch(uom);
@@ -451,7 +451,7 @@
       renderChart(data);
 
       //when we press the small button, switch the temperature units
-      $('.module__temperature-unit').click(function() {
+      $('.weather-temperature-unit').click(function() {
         uom = uom === 'F' ? 'C' : 'F';
         updateUnitOfMeasure(data);
       });
@@ -468,7 +468,7 @@
       var resultContainer = document.getElementById("forecast-daily");
       resultContainer.innerHTML = generatedHTML;
       setActiveItem(0);
-      $('.js-forecast-module-item').click(function(e) {
+      $('.weekly-daily-item').click(function(e) {
         var index = parseInt($(this).attr('data-item-index'));
         updateDetailedItemData(build_currently(api_result, index));
         setActiveItem(index);

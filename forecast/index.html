@@ -14,11 +14,11 @@
     <body>
         <div id="forecast-wrapper" class="forecast-wrapper">
             <!--here will be rendered template "template-item"-->
-            <div class="module module--forecast module__container">
-                <div id="forecast-today" class="js-forecast-module-detail">
+            <div class="forecast-container">
+                <div id="forecast-today" class="forecast-detailed-day">
 
                 </div>
-                <div id="forecast-daily" class="module__items align-days">
+                <div id="forecast-daily" class="forecast-daily align-daily">
 
                 </div>
             </div>
@@ -33,55 +33,55 @@
         <script src="script.js"></script>
 
         <script id="template-detailed-item" type="text/xx-handlebars-template">
-            <div class="module__top js-forecast-module-detail-top">
-                <div class="module__place text--primary">
+            <div class="detailed-block">
+                <div class="location-block">
                     {{city}}
                 </div>
-                <div class="module__warnings">
-                    <div class="module__summary  tx-clr--slate-light">
+                <div class="weather-desc">
+                    <div class="weather-summary  text-grey">
                         {{{summary}}}
                     </div>
                 </div>
-                <div class="module__detail module__detail--left">
-                    <img class="module__forecast-icon " src="{{get_icon icon}}" aria-hidden="true">
-                    <div class="module__temperature">
-                        <div class="module__temperature-value  text--primary">
+                <div class="weather-detailed weather-detailed_left">
+                    <img class="weather-detailed-icon" src="{{get_icon icon}}" aria-hidden="true">
+                    <div class="weather-temperature">
+                        <div class="weather-temperature-value">
                             {{{temp}}}
                         </div>
-                        <div class="module__temperature-units ">
-                            <a href="javaScript:void(0);" data-unit="f" class="module__temperature-unit js-forecast-module-detail-unit ">
+                        <div class="weather-temperature-units ">
+                            <a href="javaScript:void(0);" data-unit="f" class="weather-temperature-unit ">
                                 F
                             </a>
-                            <span class="module__temperature-unit-separator">/</span>
-                            <a href="javaScript:void(0)" data-unit="c" class="module__temperature-unit js-forecast-module-detail-unit module__temperature-unit--on text--primary">
+                            <span class="weather-temperature-unit-sep">/</span>
+                            <a href="javaScript:void(0)" data-unit="c" class="weather-temperature-unit weather-temperature-unit-active">
                                 C
                             </a>
                         </div>
                     </div>
                 </div>
-                <div class="module__detail module__detail--right">
-                    <div class="module__humidity">{{humidity}}</div>
-                    <div class="module__winds">
-                        <span class="module__winds module__winds--val">
+                <div class="weather-detailed weather-detailed_right">
+                    <div class="weather-humidity">{{humidity}}</div>
+                    <div class="weather-winds">
+                        <span class="weather-winds weather-winds-value">
                             {{wind}}
                         </span>
                     </div>
                     <div>
-                        <a href="{{daysourceUrl}}" target="_blank" class="summary-more js-forecast-module-detail-more tx-clr--blue-dark">
+                        <a href="{{daysourceUrl}}" target="_blank" class="more-link">
                             Show More
                         </a>
                     </div>
                 </div>
             </div>
-            <div class="module__bottom js-forecast-module-detail-bottom">
-                <div class="module__detail module__detail--hours js-forecast-module-detail-hours" aria-hidden="true">
+            <div class="hourly-block">
+                <div class="hourly-chart" aria-hidden="true">
                     <canvas id="myChart" width="550" height="62" class="chartjs-render-monitor"></canvas>
                 </div>
-                <div class="module__detail--hours__labels module__detail--hours__labels--desktop">
+                <div class="hourly-labels-wrapper">
                     {{#each hourly}}
-                    <div data-item-index="0" class="label-0 module__detail--hours__labels__item">
-                        <div class="module__detail__temp-label text-primary">{{{temp}}}&deg;</div>
-                        <div class="module__detail__hour-label tx-clr--slate-light">{{time}}</div>
+                    <div data-item-index="0" class="hourly-label">
+                        <div class="hourly-temp-label text-primary">{{{temp}}}&deg;</div>
+                        <div class="hourly-hour-label text-grey">{{time}}</div>
                     </div>
                     {{/each}}
                 </div>
@@ -90,11 +90,11 @@
 
         <script id="template-item" type="text/x-handlebars-template">
             {{#each this}}
-                <div data-item-index="{{index}}" class="module__items-item js-forecast-module-item  align-days__item module__items-item">
-                    <div class="module__items-day text-primary">{{{day}}}</div>
-                    <img class="module__items-icon" src="{{get_icon icon}}" />
-                    <div class="module__items-unit module__items-unit--on text-primary">{{{highTemp}}}</div>
-                    <div class="module__items-unit module__items-unit--low tx-clr--slate-light">{{{lowTemp}}}</div>
+                <div data-item-index="{{index}}" class="weekly-daily-item">
+                    <div class="daily-day text-primary">{{{day}}}</div>
+                    <img class="daily-icon" src="{{get_icon icon}}" />
+                    <div class="daily-temp daily-temp-high text-primary">{{{highTemp}}}</div>
+                    <div class="daily-temp daily-temp-low text-grey">{{{lowTemp}}}</div>
                 </div>
 
             {{/each}}

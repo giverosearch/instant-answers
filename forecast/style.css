@@ -1,24 +1,9 @@
-
-@font-face {
-    font-family: 'DDG_ProximaNova';
-    font-display: swap;
-    src: url('font/FontsFree-Net-proxima_nova_reg-webfont.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-@font-face {
-    font-family: 'DDG_ProximaNova';
-    font-display: swap;
-    src: url('font/ProximaNova-Sbold-webfont.woff') format('truetype');
-    font-weight: bold;
-    font-style: normal;
-}
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
     margin: 0;
     padding: 0;
     border: 0;
     font: inherit;
-    font-family: "DDG_ProximaNova","DDG_ProximaNova_UI_0","DDG_ProximaNova_UI_1","DDG_ProximaNova_UI_2","DDG_ProximaNova_UI_3","DDG_ProximaNova_UI_4","DDG_ProximaNova_UI_5","DDG_ProximaNova_UI_6","Proxima Nova","Helvetica Neue","Helvetica","Segoe UI","Nimbus Sans L","Liberation Sans","Open Sans",FreeSans,Arial,sans-serif;
+    font-family: Arial,sans-serif;
     font-size: 100%;
     vertical-align: baseline;
 }
@@ -29,50 +14,41 @@ html {
     font-size: 90%;
     -webkit-text-size-adjust: 100%;
 }
-.tx-clr--blue-dark {
-    color: #00278e;
-}
-.tx-clr--dk2, .tx-clr--slate-light {
-    color: #666;
+
+.text-grey {
+    color: #545454;
 }
 a {
     text-decoration: none;
 }
 a:hover, a:focus {
-    color: #00278e;
+    color: #1a0dab;
 }
 a:hover {
     text-decoration: underline;
-}
-.forecast-wrapper .module--forecast .summary-more {
-    font-weight: bold;
 }
 .forecast-wrapper {
     margin-bottom: 10px
 }
 
-.forecast-wrapper .module--forecast {
+.forecast-wrapper .forecast-container {
     line-height: initial;
     margin-bottom: 5px;
-    border: 1px solid rgba(150,150,150,0.3);
+    border: 1px solid #dbdbdb;
     overflow-x: hidden;
     background: #fff;
     max-width: 635px;
 }
 
-.forecast-wrapper .module--forecast .module__top {
+.forecast-wrapper .forecast-container .detailed-block {
     padding: 20px 20px 0 20px
 }
 
-.forecast-wrapper .module--forecast .module__bottom {
+.forecast-wrapper .forecast-container .hourly-block {
     padding: 0 20px 19px
 }
 
-.forecast-wrapper .module--forecast .module__top.half-opacity,.forecast-wrapper .module--forecast .module__bottom .half-opacity {
-    opacity: 0.5
-}
-
-.forecast-wrapper .module--forecast .module__place {
+.forecast-wrapper .forecast-container .location-block {
     font-size: 20px;
     font-weight: 600;
     overflow: hidden;
@@ -81,32 +57,25 @@ a:hover {
     white-space: nowrap
 }
 
-.forecast-wrapper .module--forecast .module__date {
-    font-size: 1em;
-    line-height: 1.54;
-    color: #666;
-    clear: both
-}
-
-.forecast-wrapper .module--forecast .module__detail {
+.forecast-wrapper .forecast-container .weather-detailed {
     vertical-align: top;
     height: auto;
     display: inline-block;
     width: 50%
 }
 
-.forecast-wrapper .module--forecast .module__detail--hours,.forecast-wrapper .module--forecast .module__detail--hours-mobile {
+.forecast-wrapper .forecast-container .hourly-chart {
     height: 62px;
     width: 100%;
     margin-top: 5px
 }
 
-.forecast-wrapper .module--forecast .module__detail--left {
+.forecast-wrapper .forecast-container .weather-detailed_left {
     min-width: 143px;
     padding-right: 10px
 }
 
-.forecast-wrapper .module--forecast .module__detail--right {
+.forecast-wrapper .forecast-container .weather-detailed_right {
     max-width: 100%;
     width: auto;
     margin-top: 10px;
@@ -115,69 +84,40 @@ a:hover {
     line-height: 18px
 }
 
-.forecast-wrapper .module--forecast .module__detail--icon {
-    display: block;
-    margin-top: -12px
-}
-
-.forecast-wrapper .module--forecast .module__winds,.forecast-wrapper .module--forecast .module__humidity {
+.forecast-wrapper .forecast-container .weather-winds,.forecast-wrapper .forecast-container .weather-humidity {
     text-transform: capitalize;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis
 }
 
-.forecast-wrapper .module--forecast .module__humidity {
+.forecast-wrapper .forecast-container .weather-humidity {
     margin-bottom: 1px
 }
 
-.forecast-wrapper .module--forecast .module__winds--val {
+.forecast-wrapper .forecast-container .weather-winds-value {
     text-transform: uppercase
 }
 
-.forecast-wrapper .module--forecast .module__warnings {
+.forecast-wrapper .forecast-container .weather-desc {
     min-height: 39px;
     margin-bottom: 2px
 }
 
-.forecast-wrapper .module--forecast .module__weather-warning {
-    display: block;
-    text-decoration: none;
-    margin-left: -3px;
-    font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap
-}
-
-.dark-bg .forecast-wrapper .module--forecast .module__weather-warning,.dark-bg .forecast-wrapper .module--forecast .module__weather-warning:hover,.dark-bg .forecast-wrapper .module--forecast .module__weather-warning:focus,.dark-bg .forecast-wrapper .module--forecast .module__weather-warning:visited {
-    color: #dadada
-}
-
-.forecast-wrapper .module--forecast .module__weather-warning--red,.forecast-wrapper .module--forecast .module__weather-warning--red:hover,.forecast-wrapper .module--forecast .module__weather-warning--red:focus,.forecast-wrapper .module--forecast .module__weather-warning--red:visited,.dark-bg .forecast-wrapper .module--forecast .module__weather-warning--red,.dark-bg .forecast-wrapper .module--forecast .module__weather-warning--red:hover,.dark-bg .forecast-wrapper .module--forecast .module__weather-warning--red:focus,.dark-bg .forecast-wrapper .module--forecast .module__weather-warning--red:visited {
-    color: #de5833
-}
-
-.forecast-wrapper .module--forecast .module__summary {
+.forecast-wrapper .forecast-container .weather-summary {
     font-size: 1em;
     margin: 4px 0 2px;
     width: 100;
     text-transform: capitalize;
 }
 
-.forecast-wrapper .module--forecast .module__summary--ie11 {
-    margin-top: 0
+
+.forecast-wrapper .forecast-container .more-link {
+    font-weight: bold;
+    color: #1a0dab;
 }
 
-.forecast-wrapper .module--forecast .summary-more {
-    font-weight: bold
-}
-
-.dark-bg .forecast-wrapper .module--forecast .summary-more,.dark-bg .forecast-wrapper .module--forecast .summary-more:hover,.dark-bg .forecast-wrapper .module--forecast .summary-more:focus,.dark-bg .forecast-wrapper .module--forecast .summary-more:visited {
-    color: #dadada
-}
-
-.forecast-wrapper .module--forecast .module__forecast-icon {
+.forecast-wrapper .forecast-container .weather-detailed-icon {
     vertical-align: top;
     height: 64px;
     display: inline-block;
@@ -187,18 +127,15 @@ a:hover {
     margin-top: -1px
 }
 
-.forecast-wrapper .module--forecast .module__forecast-icon--ie11 {
-    margin-top: 5px
-}
 
-.forecast-wrapper .module--forecast .module__temperature {
+.forecast-wrapper .forecast-container .weather-temperature {
     vertical-align: top;
     height: 64px;
     display: inline-block;
     margin-right: 12px
 }
 
-.forecast-wrapper .module--forecast .module__temperature-units {
+.forecast-wrapper .forecast-container .weather-temperature-units {
     vertical-align: top;
     height: 60px;
     display: inline-block;
@@ -206,11 +143,7 @@ a:hover {
     padding-top: 10px
 }
 
-.forecast-wrapper .module--forecast .module__temperature-units--ie11 {
-    padding-top: 7px
-}
-
-.forecast-wrapper .module--forecast .module__temperature-value {
+.forecast-wrapper .forecast-container .weather-temperature-value {
     vertical-align: top;
     height: 60px;
     display: inline-block;
@@ -220,90 +153,59 @@ a:hover {
     text-align: right
 }
 
-.forecast-wrapper .module--forecast .module__temperature-value--ie11 {
-    padding-top: 0;
-    margin-top: -6px
-}
 
-.forecast-wrapper .module--forecast .module__temperature-unit {
+.forecast-wrapper .forecast-container .weather-temperature-unit {
     font-size: 1em;
     line-height: 1.43;
     font-weight: 600;
     text-decoration: none
 }
 
-.forecast-wrapper .module--forecast .module__temperature-unit,.forecast-wrapper .module--forecast .module__temperature-unit:hover {
-    color: #222
+.forecast-wrapper .forecast-container .weather-temperature-unit,.forecast-wrapper .forecast-container .weather-temperature-unit:hover {
+    color: #000000
 }
 
-.dark-bg .forecast-wrapper .module--forecast .module__temperature-unit,.dark-bg .forecast-wrapper .module--forecast .module__temperature-unit:hover {
-    color: #dadada
+.forecast-wrapper .forecast-container .weather-temperature-unit:not(.weather-temperature-unit-active),.forecast-wrapper .forecast-container .weather-temperature-unit:not(.weather-temperature-unit-active):hover {
+    color: #878787
 }
 
-.forecast-wrapper .module--forecast .module__temperature-unit:not(.module__temperature-unit--on),.forecast-wrapper .module--forecast .module__temperature-unit:not(.module__temperature-unit--on):hover {
-    color: #888
-}
-
-.dark-bg .forecast-wrapper .module--forecast .module__temperature-unit:not(.module__temperature-unit--on),.dark-bg .forecast-wrapper .module--forecast .module__temperature-unit:not(.module__temperature-unit--on):hover {
-    color: #999
-}
-
-.forecast-wrapper .module--forecast .module__temperature-unit-separator {
+.forecast-wrapper .forecast-container .weather-temperature-unit-sep {
     margin-left: 4px
 }
 
-.forecast-wrapper .module--forecast .module__temperature-unit--on {
+.forecast-wrapper .forecast-container .weather-temperature-unit-active {
     font-weight: 600;
-    border-bottom: 1px solid #222
+    border-bottom: 1px solid #000000
 }
-
-.dark-bg .forecast-wrapper .module--forecast .module__temperature-unit--on {
-    border-bottom: 1px solid #dadada
-}
-
-.forecast-wrapper .module--forecast .module__panel {
-    vertical-align: top;
-    height: 55px;
-    display: inline-block;
-    font-size: 1em;
-    color: #666;
-    width: 290px
-}
-
-.forecast-wrapper .module--forecast .module__detail--hours__labels {
+.forecast-wrapper .forecast-container .hourly-labels-wrapper {
     overflow: hidden;
     -webkit-justify-content: space-between;
     justify-content: space-between;
     width: 100%;
-    margin-bottom: -5px
-}
-
-.forecast-wrapper .module--forecast .module__detail--hours__labels__item {
-    text-align: center;
-    margin-top: 10px
-}
-
-.forecast-wrapper .module--forecast .module__detail--hours__labels--desktop {
+    margin-bottom: -5px;
     display: -webkit-flex;
     display: flex
 }
 
-.forecast-wrapper .module--forecast .module__detail--hours__labels--mobile {
-    display: none
+.forecast-wrapper .forecast-container .hourly-label {
+    text-align: center;
+    margin-top: 10px
 }
 
-.forecast-wrapper .module--forecast .module__detail__temp-label {
+
+
+.forecast-wrapper .forecast-container .hourly-temp-label {
     font-weight: 600
 }
 
-.forecast-wrapper .module--forecast .align-days {
+.forecast-wrapper .forecast-container .align-daily {
     display: -webkit-flex;
     display: flex;
     white-space: nowrap;
     overflow-y: hidden
 }
 
-.forecast-wrapper .module--forecast .align-days__item {
+.forecast-wrapper .forecast-container .weekly-daily-item {
     -webkit-flex-direction: row;
     flex-direction: row;
     -webkit-align-items: stretch;
@@ -319,29 +221,21 @@ a:hover {
     flex: 1
 }
 
-.forecast-wrapper .module--forecast .module__items {
+.forecast-wrapper .forecast-container .forecast-daily {
     -webkit-overflow-scrolling: touch;
     overflow-style: move
 }
 
-.forecast-wrapper .module--forecast .module__items-item {
+.forecast-wrapper .forecast-container .weekly-daily-item {
     height: 143px;
     border-top: 1px solid #e0e0e0
 }
 
-.dark-bg .forecast-wrapper .module--forecast .module__items-item {
-    border-top: 1px solid #4b4b4b
-}
-
-.forecast-wrapper .module--forecast .module__items-item:not(:last-child) {
+.forecast-wrapper .forecast-container .weekly-daily-item:not(:last-child) {
     border-right: 1px solid #e0e0e0
 }
 
-.dark-bg .forecast-wrapper .module--forecast .module__items-item:not(:last-child) {
-    border-right: 1px solid #4b4b4b
-}
-
-.forecast-wrapper .module--forecast .module__items-day {
+.forecast-wrapper .forecast-container .daily-day {
     font-size: 1em;
     font-weight: 600;
     text-transform: capitalize;
@@ -349,102 +243,49 @@ a:hover {
     line-height: 100%
 }
 
-.forecast-wrapper .module--forecast .module__items-day--today {
-    color: #888
-}
 
-.forecast-wrapper .module--forecast .module__items-unit {
+.forecast-wrapper .forecast-container .daily-temp {
     font-weight: normal;
     font-size: 1em;
     line-height: 100%
 }
 
-.forecast-wrapper .module--forecast .module__items-unit--on {
+.forecast-wrapper .forecast-container .daily-temp-high {
     font-weight: 600;
-    font-size: 18px
+    font-size: 17px
 }
 
-.forecast-wrapper .module--forecast .module__items-unit--low {
+.forecast-wrapper .forecast-container .daily-temp-low {
     margin-top: 5px
 }
 
-.forecast-wrapper .module--forecast .module__items-icon {
+.forecast-wrapper .forecast-container .daily-icon {
     width: 48px;
     height: 48px;
     margin-top: 3px;
     margin-bottom: 0
 }
 
-.forecast-wrapper .module--forecast .module__items-item:last-child {
+.forecast-wrapper .forecast-container .weekly-daily-item:last-child {
     border-right: 0
 }
 
-.forecast-wrapper .module--forecast .module__items-item:hover {
-    background-color: #f7f7f7;
+.forecast-wrapper .forecast-container .weekly-daily-item:hover {
+    background-color: #f6f6f6;
     cursor: pointer
 }
 
-.forecast-wrapper .module--forecast .module__items-item.active {
+.forecast-wrapper .forecast-container .weekly-daily-item.active {
     background-color: #f7f7f7;
-    border-top: 1px solid #222
+    border-top: 1px solid #000000
 }
 
-.dark-bg .forecast-wrapper .module--forecast .module__items-item.active {
-    border-top: 1px solid #4b4b4b
+.forecast-wrapper .forecast-container .weekly-daily-item.active .daily-temp-low {
+    color: #000000
 }
-
-.forecast-wrapper .module--forecast .module__items-item.active .module__items-unit--low {
-    color: #222
-}
-
-.forecast-wrapper .module__more-at-and-feedback {
-    display: -webkit-flex;
-    display: flex
-}
-
-.forecast-wrapper .module__more-at {
-    font-size: 12px;
-    text-align: right;
-    padding: 8px 4px 0 0;
-    line-height: 1;
-    float: left;
-    margin-left: auto
-}
-
-.forecast-wrapper .module__more-at--not-en {
-    padding: 8px 0 0 0;
-    margin-right: 20px
-}
-
-.forecast-wrapper .module__more-at .zci__more-at {
-    padding: 0 5px;
-    text-decoration: underline
-}
-
-.forecast-wrapper .module__more-at .zci__more-at:hover,.forecast-wrapper .module__more-at .zci__more-at:active {
-    color: #888
-}
-
-.forecast-wrapper .module__more-at.module__more-at--not-en .zci__more-at {
-    padding: 0
-}
-
-.forecast-wrapper .feedback-prompt {
-    float: left;
-    margin-right: 20px;
-    padding: 8px 0 0 0
-}
-
-.forecast-wrapper .feedback-prompt__link {
-    padding: 0
-}
-
 @media (max-width: 590px) {
-    .forecast-wrapper .module--forecast .module__detail--hours-mobile {
-        margin-top:1px
-    }
 
-    .forecast-wrapper .module--forecast .module__forecast-icon {
+    .forecast-wrapper .forecast-container .weather-detailed-icon {
         height: 48px;
         width: 48px;
         vertical-align: top;
@@ -452,23 +293,23 @@ a:hover {
         margin-top: -2px
     }
 
-    .forecast-wrapper .module--forecast .module__detail--right {
+    .forecast-wrapper .forecast-container .weather-detailed_right {
         margin-top: 5px
     }
 
-    .forecast-wrapper .module--forecast .module__detail .module__temperature {
+    .forecast-wrapper .forecast-container .weather-detailed .weather-temperature {
         height: 48px;
         vertical-align: top;
         margin-right: 0;
         margin-left: 10px
     }
 
-    .forecast-wrapper .module--forecast .module__detail .module__temperature-units {
+    .forecast-wrapper .forecast-container .weather-detailed .weather-temperature-units {
         vertical-align: top;
         padding-top: 7.5px
     }
 
-    .forecast-wrapper .module--forecast .module__detail .module__temperature-value {
+    .forecast-wrapper .forecast-container .weather-detailed .weather-temperature-value {
         display: -moz-inline-stack;
         display: inline-block;
         vertical-align: 48px;
@@ -478,7 +319,7 @@ a:hover {
         padding-top: 4px
     }
 
-    .forecast-wrapper .module--forecast .module__warnings {
+    .forecast-wrapper .forecast-container .weather-desc {
         min-height: 54px
     }
 }
