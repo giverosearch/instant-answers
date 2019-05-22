@@ -2,8 +2,10 @@ name: forecast
 description:
   en: "This forecast is based on open source code."
 developers:
+  - name: Givero
+    url: https://github.com/giverosearch/instant-answers
   - name: DuckDuckGo
-    url: https://github.com/duckduckgo/zeroclickinfo-goodies/tree/master/share/goodie/stopwatch
+    url: https://github.com/duckduckgo/zeroclickinfo-spice
   - name: DeviantArt
     url: https://www.deviantart.com/merlinthered/art/plain-weather-icons-157162192
 homepage: https://github.com/giverosearch

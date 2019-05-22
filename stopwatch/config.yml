@@ -3,6 +3,8 @@ description:
   en: "This stopwatch is based on open source code."
   da: "Dette stopur er baseret på open source kildekode."
 developers:
+  - name: Givero
+    url: https://github.com/giverosearch/instant-answers
   - name: DuckDuckGo
     url: https://github.com/duckduckgo/zeroclickinfo-goodies/tree/master/share/goodie/stopwatch
   - name: Matt Ramina
